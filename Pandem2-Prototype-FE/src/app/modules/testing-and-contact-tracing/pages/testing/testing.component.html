@@ -1,0 +1,69 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<div class="container-fluid dashboard-page">
+  <div class="row">
+    <div class="col-xl-12">
+      <mat-card class="header-card">
+        <mat-card-title class="text-center text-sm-left page-header">
+          <div class="summary-section__name-icon-container">
+            <h2 class="page-header">Testing in {{selectedRegionName}}</h2>
+            <div>
+              <mat-icon (click)="showHelpInfo()">help</mat-icon>
+            </div>
+          </div>
+        </mat-card-title>
+        <mat-card-content class="text-center text-sm-left ">
+          <p>These charts lay out the key metrics for understanding the reach and severity of avian influenza in a
+            given area: number of tests performed, number of tests performed per 100,000 people (testing rate),
+            and percentage of tests that are positive (positivity rate).”
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-6 col-xl-3 summary-container" id="testing-confirmed-positive-cases-summary-card" *ngIf="!isEurope">
+      <app-testing-confirmed-positive-cases-summary></app-testing-confirmed-positive-cases-summary>
+    </div>
+    <div class="col-lg-6 col-xl-3 summary-container" id="testing-current-testing-policy-summary-card" *ngIf="!isEurope">
+      <app-testing-current-testing-policy-summary></app-testing-current-testing-policy-summary>
+    </div>
+    <div class="col-lg-12" [class.col-xl-6]="!isEurope" id="testing-map-card">
+      <mat-card class="world-map">
+        <app-map
+          [module]="'testing'"
+          [filters]='geographicalAreaFilters'
+          [selectedFilterValue]="'Tests100k'"
+        ></app-map>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row" *ngFor="let item of graphList">
+    <div class="col-xl-10" [attr.id]="item.graphId">
+      <app-graph-wrapper [graph]="item"></app-graph-wrapper>
+    </div>
+    <div class="col-xl-2">
+      <app-card-manager #cardManager [graphId]="item.graphId" [parentPage]="this"></app-card-manager>
+    </div>
+  </div>
+</div>

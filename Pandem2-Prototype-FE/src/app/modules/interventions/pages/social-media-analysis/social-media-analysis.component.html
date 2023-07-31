@@ -1,0 +1,196 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<div class="container-fluid dashboard-page">
+  <div class="row">
+    <div class="col-xl-12">
+      <mat-card class="header-card">
+        <mat-card-title class="text-center text-sm-left page-header">
+          <div class="summary-section__name-icon-container">
+            <h2 class="page-header">{{'Social Media Analysis' | uppercase}} </h2>
+            <div>
+              <mat-icon (click)="showHelpInfo()">help</mat-icon>
+            </div>
+          </div>
+        </mat-card-title>
+        <mat-card-content class="text-center text-sm-left">
+          <mat-icon class="float-right mat-card-content-toggle" (click)="toggleSocialMediaAnalysisInfo()">{{ getToggleIconByCondition(showSocialMediaAnalysisInfo) }}</mat-icon>
+          <p *ngIf="showSocialMediaAnalysisInfo">
+            This page focuses on social media analysis (SMA) to support pandemic surveillance and communication. The main goal of this task is to
+            analyse public communication and reactions to government measures around a specific pathogen. The analysis shown on this page focuses
+            on suggestion mining, sentiment analysis and emotion analysis in addition to aspect-based (topic-based) social media analysis.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row first-section">
+    <div class="col-xl-12">
+      <mat-card>
+        <div class="row">
+          <div class="col-md-1 label">
+            {{'Data from' | uppercase}}
+          </div>
+          <div class="col-md-5">
+            <app-location-select
+              includeAllRegion="true"
+            ></app-location-select>
+          </div>
+          <div class="col-md-1 label">
+            {{'Languages' | uppercase}}
+          </div>
+          <div class="col-md-5">
+            <div class="d-flex align-items-center language-select-input ">
+              <mat-icon>search</mat-icon>
+              <mat-select name="languages" [(ngModel)]="selectedLanguages" (ngModelChange)="filtersChanged()" multiple>
+                <mat-select-trigger>
+                  <mat-chip-list>
+                    <mat-chip
+                      *ngFor="let language of selectedLanguages"
+                      (removed)="removeLanguage(language.code)" selected>
+                      {{language.name}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                  </mat-chip-list>
+                </mat-select-trigger>
+                <mat-option>
+                  <ngx-mat-select-search
+                    [placeholderLabel]="placeholderLanguage"
+                    [noEntriesFoundLabel]="noLanguageFound"
+                    ngModel
+                    (ngModelChange)="filterLanguage($event)">
+                  </ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let language of filteredLanguages" [value]="language">{{language.name}}</mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-1 label">
+            {{'Source' | uppercase}}
+          </div>
+          <div class="col-md-5">
+            <div class="d-flex align-items-center language-select-input">
+              <mat-icon>search</mat-icon>
+              <mat-select name="source" [(ngModel)]="selectedSources" (ngModelChange)="filtersChanged()" multiple>
+                <mat-select-trigger>
+                  <mat-chip-list>
+                    <mat-chip
+                      *ngFor="let source of selectedSources"
+                      (removed)="removeSource(source)" selected>
+                      {{source | titlecase}}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                  </mat-chip-list>
+                </mat-select-trigger>
+                <mat-option>
+                  <ngx-mat-select-search
+                    [placeholderLabel]="placeholderSource"
+                    [noEntriesFoundLabel]="noSourceFound"
+                    ngModel
+                    (ngModelChange)="filterSource($event)">
+                  </ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let source of filteredSources" [value]="source">{{sourcesMap[source] | titlecase}}</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-6 post-number">
+            <span class="label">{{'Number of Posts ' | uppercase}}</span>
+            <input class="" matInput [ngModel]="postNumber" readonly>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-12">
+      <mat-card>
+        <mat-card-title class="text-center text-sm-left">
+          <div class="summary-section__name-icon-container">
+            <h2>{{'Sentiment and Emotion Analysis' | uppercase}}</h2>
+          </div>
+        </mat-card-title>
+        <mat-card-content class="text-center text-sm-left">
+          <mat-icon class="float-right mat-card-content-toggle" (click)="toggleSentimentAndEmotions()">{{ getToggleIconByCondition(showSentimentAndEmotions) }}</mat-icon>
+          <p *ngIf="showSentimentAndEmotions">
+            This section shows the results of analysing social media posts for sentiments and emotions. The analysis of the tone of
+            language circulating on social media towards specific topics can be beneficial for certain end-users such as health and
+            government authorities. Sentiment analysis is concerned with identifying whether a social media post holds positive, negative,
+            or neutral sentiment. Emotion analysis further identifies emotions conveyed in the text using the eight basic categories of
+            emotions by Plutchik (e.g. sad, anger, happy, joy, etc). Furthermore, this task extends the traditional analysis of opinionated
+            text by linking the identified sentiment, and emotions to certain aspects (topics).
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div  class="row">
+    <div class="col-xl-12">
+      <mat-card>
+        <mat-card-content *ngIf="topicsData">
+          <app-social-media-analysis-sentiment-and-emotion
+            [topicsData]="topicsData"
+            [startDate]="startDate"
+            [endDate]="endDate"></app-social-media-analysis-sentiment-and-emotion>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-12">
+      <mat-card>
+        <mat-card-title class="text-center text-sm-left">
+          <div class="summary-section__name-icon-container">
+            <h2>{{'Suggestion mining' | uppercase}}</h2>
+          </div>
+        </mat-card-title>
+        <mat-card-content class="text-center text-sm-left">
+          <mat-icon class="float-right mat-card-content-toggle" (click)="toggleSuggestionMining()">{{ getToggleIconByCondition(showSuggestionMining) }}</mat-icon>
+          <p *ngIf="showSuggestionMining">
+            Suggestion mining can be a very powerful tool for government officials and public health agencies to understand the public reaction
+            and opinion around certain topics. This can help in the decision-making process and more importantly, anticipate (and ideally attune
+            and contain) people’s future reactions towards certain measures and situations. This page shows the results of analysing social media
+            posts to identify and extract suggestions from the incoming text then linking them to certain aspects (topics).
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-12">
+      <mat-card>
+        <mat-card-content>
+          <app-social-media-analysis-suggestion-mining
+            [topicsData]="topicsData"
+            [endDate]="endDate"></app-social-media-analysis-suggestion-mining>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+</div>

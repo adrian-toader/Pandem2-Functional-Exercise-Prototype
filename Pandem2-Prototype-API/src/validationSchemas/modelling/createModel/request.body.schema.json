@@ -1,0 +1,17 @@
+{
+  "$id": "modelling.createModel.request.body.schema",
+  "description": "Create model request body schema",
+  "allOf": [
+    {
+      "$ref": "/modellingModel#/definitions/modellingModelResourceEntry"
+    },
+    {
+      "required": [
+        "name",
+        "key",
+        "pathogen",
+        "parameters"
+      ]
+    }
+  ]
+}

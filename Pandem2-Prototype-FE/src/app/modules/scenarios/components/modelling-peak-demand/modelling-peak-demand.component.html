@@ -1,0 +1,90 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<mat-card>
+  <div class="row">
+    <div class="col-10">
+      <h3 class="modelling-title-weight">Estimated Peak Demand vs Resources Available</h3>
+    </div>
+    <div class="col-2 text-right">
+      <mat-icon class="modelling-info-icon" (click)="openInfoDialog()">info</mat-icon>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <p>The peak demand for each resource is the highest estimated need in a single day. Figures are based on bed occupancy, taking into account average length of stay of patients. Ideally, capacity would meet this peak need. The graph contrasts the estimated peak demand with the total capacity available in the region, and the proportion of capacity pre-allocated for the pandemic.</p>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="!isCollapsed">
+    <!-- Baseline scenario -->
+    <div *ngIf="rawData" [ngClass]="{'col-xl-6': comparisonRawData, 'col-xl-12': !comparisonRawData}">
+      <div class="peak-demand-card">
+        <div class="summary-section__name-icon-container mb-3">
+          Baseline scenario: {{rawData.name}}
+        </div>
+        <div class="row" *ngIf="data.size">
+          <div class="col-12">
+            <app-highcharts
+              [chartType]="'column'"
+              [series]="chartSeries"
+              [showExportMenu]="true"
+              [xAxis]="chartXAxis"
+              [xAxisData]="xAxisData"
+              [plotOptions]="chartPlotOptions"
+              [toolTip]="chartTooltip"
+              [chartTitle]="chartTitle"
+              [chartSubtitle]="chartSubtitle"
+              [height]="450">
+            </app-highcharts>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison scenario -->
+    <div class="col-xl-6" *ngIf="comparisonRawData">
+      <div class="peak-demand-card">
+        <div class="summary-section__name-icon-container mb-3">
+          Alternative scenario: {{comparisonRawData.name}}
+        </div>
+        <div class="row" *ngIf="comparisonData.size">
+          <div class="col-12">
+            <app-highcharts
+              [chartType]="'column'"
+              [series]="compChartSeries"
+              [showExportMenu]="true"
+              [xAxis]="chartXAxis"
+              [xAxisData]="xAxisData"
+              [plotOptions]="chartPlotOptions"
+              [toolTip]="chartTooltip"
+              [chartTitle]="chartTitle"
+              [chartSubtitle]="chartSubtitle"
+              [height]="450">
+            </app-highcharts>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card>

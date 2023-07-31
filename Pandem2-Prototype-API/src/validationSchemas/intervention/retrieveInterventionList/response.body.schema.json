@@ -1,0 +1,18 @@
+{
+  "$id": "intervention.retrieveInterventionList.response.body.schema",
+  "description": "Retrieve intervention list response schema",
+  "type": "array",
+  "items": {
+    "allOf": [
+      {
+        "$ref": "/intervention#/definitions/interventionResourceEntry"
+      },
+      {
+        "required": [
+          "location",
+          "name"
+        ]
+      }
+    ]
+  }
+}

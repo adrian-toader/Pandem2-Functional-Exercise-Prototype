@@ -1,0 +1,17 @@
+{
+  "$id": "modelling.updateModel.request.body.schema",
+  "description": "Update modelling model request body schema",
+  "allOf": [
+    {
+      "$ref": "/modellingModel#/definitions/modellingModelResourceEntry"
+    },
+    {
+      "required": [
+        "name",
+        "key",
+        "pathogen",
+        "parameters"
+      ]
+    }
+  ]
+}

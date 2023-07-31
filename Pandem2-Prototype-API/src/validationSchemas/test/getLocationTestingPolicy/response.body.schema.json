@@ -1,0 +1,40 @@
+{
+  "$id": "test.getLocationTestingPolicy.response.body.schema",
+  "description": "Get testing policy for requested locations - response body schema",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "testing_policy": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "date",
+          "testing_policy"
+        ]
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "/dataSource#/definitions/dataSourceMetadataEntry"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$id": "intervention.retrieveSourcesList.response.body.schema",
+  "description": "Retrieve intervention sources list response schema",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
+

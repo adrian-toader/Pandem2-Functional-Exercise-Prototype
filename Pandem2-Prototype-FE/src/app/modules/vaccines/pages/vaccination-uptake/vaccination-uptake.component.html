@@ -1,0 +1,71 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<div class="container-fluid dashboard-page">
+  <div class="row">
+    <div class="col-xl-12">
+      <mat-card class="header-card">
+        <mat-card-title class="page-header text-center text-sm-left">
+          <div class="summary-section__name-icon-container">
+            <h2 class="page-header">{{'Vaccination in ' | uppercase}}  {{selectedRegionName | uppercase}}</h2>
+            <div>
+              <mat-icon (click)="showHelpInfo()">help</mat-icon>
+            </div>
+          </div>
+        </mat-card-title>
+        <mat-card-content class="text-center text-sm-left">
+          <p>Safe and effective vaccines are a powerful tool for ensuring public health and controlling the pandemic.
+            Results from observational studies carried out to date have shown that the vaccines authorised
+            in the EU/EEA are currently highly protective against severe avian influenza, hospitalisation, and death.
+            The European Medicines Agency (EMA) evaluates vaccines before they are authorised
+            for use in the EU by the European Commission.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-5 summary-container" *ngIf="!isEurope">
+      <app-vaccinations-summary></app-vaccinations-summary>
+    </div>
+    <div [class.col-lg-7]="!isEurope" [class.col-lg-12]="isEurope">
+      <mat-card class="world-map">
+          <app-map
+                  [module]="'vaccinations'"
+                  [filters]='doseAreaFilters'
+                  [selectedFilterValue]="DoseType.OneDose"
+                  [secondFilter]='populationAreaFilters'
+                  [selectedSecondFilterValue]="'All'"
+                  [mapHeight]="350"
+          ></app-map>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row" *ngFor="let item of graphList">
+    <div class="col-xl-10">
+      <app-graph-wrapper [graph]="item"></app-graph-wrapper>
+    </div>
+    <div class="col-xl-2">
+      <app-card-manager #cardManager [graphId]="item.graphId" [parentPage]="this"></app-card-manager>
+  </div>
+  </div>
+</div>

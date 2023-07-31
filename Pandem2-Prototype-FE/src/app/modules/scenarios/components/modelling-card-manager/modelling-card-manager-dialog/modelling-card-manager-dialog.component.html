@@ -1,0 +1,108 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<button mat-icon-button class="dialog-close-button" [mat-dialog-close]="true">
+  <mat-icon aria-hidden="false" aria-label="close button">close</mat-icon>
+</button>
+<mat-dialog-content class="modelling-card-manager-dialog">
+  <div class="row">
+    <div class="col-12">
+      <h3 class="modelling-title-weight">Select the outputs you would like to visualise</h3>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 d-flex flex-wrap" [formGroup]="outputsFormGroup">
+      <div class="col-xl-4" *ngFor="let column of outputsDisplay">
+        <div class="d-flex flex-column my-4" *ngFor="let category of column">
+          <div class="modelling-exploration-dialog-category">
+            <h3>{{category.category}}</h3>
+          </div>
+          <mat-card class="modelling-exploration-dialog-category-card d-flex flex-column">
+            <div class="modelling-exploration-dialog-subcategory-group" *ngFor="let subcategory of category.subcategories">
+              <h4 class="modelling-exploration-dialog-subcategory-title" *ngIf="subcategory.subcategory">
+                {{subcategory.subcategory}}
+              </h4>
+              <div class="modelling-exploration-dialog-input-group d-flex" *ngFor="let key of subcategory.keys">
+                <p class="modelling-exploration-dialog-input-name col-9">
+                  {{key.label}}
+                </p>
+
+                <div class="col-2 modelling-exploration-dialog-ages-group">
+                  <div class="modelling-exploration-dialog-ages" *ngFor="let ageGroup of key.ageGroups">
+                    <p>{{ageGroup}}</p>
+                  </div>
+                </div>
+
+                <div class="col-1 modelling-exploration-dialog-checkbox-group d-flex flex-column">
+                  <ng-container *ngFor="let keyElem of key.keyGroup">
+                    <mat-checkbox
+                      [formControlName]="keyElem"
+                      [color]="'primary'"
+                      (change)="outputCheckboxChanged()">
+                    </mat-checkbox>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="selectedOutputs.length">
+    <div class="col-12" [formGroup]="plotlinesFormGroup">
+      <h3 class="modelling-title-weight">Which outputs should be plotlines?</h3>
+      <p>Plotlines are a list of lines stretching across the plot area, marking a specific value on one of the axes</p>
+      <div class="modelling-exploration-plotline-group d-flex" *ngFor="let key of selectedOutputs">
+        <p>{{outputs.get(key).label}} <span *ngIf="outputs.get(key).ageLabel">{{outputs.get(key).ageLabel}}</span></p>
+        <mat-checkbox
+          [formControlName]="key"
+          [color]="'primary'">
+        </mat-checkbox>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-12 modelling-exploration-dialog-warning mb-3" *ngIf="showWarning">
+      You must select at least 1 output
+    </div>
+    <div class="col-12 d-flex justify-content-end">
+      <button mat-raised-button class="modelling-icon-size modelling-button mr-2" [mat-dialog-close]="true">
+        <mat-icon aria-hidden="false" aria-label="close button">cancel</mat-icon>
+        CANCEL
+      </button>
+      <button mat-raised-button class="modelling-button modelling-icon-size" (click)="acceptChanges()">
+        <ng-container *ngIf="injectedData.chartIndex === undefined">
+          CREATE NEW
+          <mat-icon>skip_next</mat-icon>
+        </ng-container>
+        <ng-container *ngIf="injectedData.chartIndex !== undefined">
+          MODIFY
+          <mat-icon>edit</mat-icon>
+        </ng-container>
+      </button>
+    </div>
+  </div>
+</mat-dialog-content>

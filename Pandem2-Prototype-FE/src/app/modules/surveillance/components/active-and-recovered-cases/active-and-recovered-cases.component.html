@@ -1,0 +1,175 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<mat-card>
+  <mat-card-title>Active and Recovered Cases</mat-card-title>
+  <mat-card-content>
+    {{'Active is the number of confirmed cases minus the deaths and the estimated number of recovered cases' }}
+  </mat-card-content>
+  <mat-card-subtitle>
+    <app-sources
+      [sourceType]="SourceType.GRAPH"
+      [sources]="sources"
+      [lastUpdate]="lastUpdate"></app-sources>
+  </mat-card-subtitle>
+  <mat-card-content *ngIf="!isCollapsed">
+    <div class="form-inline">
+      <div class="form-group mr-4 mb-4">
+        <app-chart-type (chartTypeChanged)="changeChartType($event)" [chartTypes]="chartTypes" [selectedChartType]="chartType"></app-chart-type>
+      </div>
+      <div class="form-group mr-4 mb-4">
+        <app-chart-time-interval (intervalChanged)="changeTimeInterval($event)" [intervalOptions]="chartsIntervalOptions"></app-chart-time-interval>
+      </div>
+      <div class="form-group mr-4 mb-4">
+        <mat-button-toggle-group [value]="LinearLog" aria-label="Type" class="type-container" name="fontStyle">
+          <mat-button-toggle (change)="changeActiveAndRecoveredCasesPlotType($event)" value="linear">{{graphFilterButtons.LINEAR}}</mat-button-toggle>
+          <mat-button-toggle (change)="changeActiveAndRecoveredCasesPlotType($event)" value="logarithmic">{{graphFilterButtons.LOGARITHMIC}}</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <div class="form-group mr-4 mb-4">
+        <mat-button-toggle-group (change)="changeTotalType($event)" aria-label="Type" class="type-container" name="fontStyle" value="Absolute">
+          <mat-button-toggle value="Absolute">{{graphFilterButtons.ABSOLUTE}}</mat-button-toggle>
+          <mat-button-toggle value="100K">{{graphFilterButtons.PER100K}}</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+    <div *ngIf="isLoading()" class="mat-spinner-container loading-chart-placeholder">
+      <mat-spinner></mat-spinner>
+    </div>
+    <mat-tab-group *ngIf="isLoaded()" [selectedIndex]="currentTabIndex" (selectedIndexChange)="updateTabIndex($event)">
+      <mat-tab *ngIf="dailyChart" class="charts-container" label="DAILY  CASES">
+        <ng-template matTabContent>
+          <mat-card>
+            <mat-card-title>Active and recovered cases</mat-card-title>
+            <app-highcharts
+              #firstChart
+              (mouseenter)="tooltipSynchronisationService.setSyncRules(firstChartView, secondChartView)"
+              (mousemove)="tooltipSynchronisationService.syncPointers(syncCharts.FirstChart, firstChartView, secondChartView)"
+              (mouseleave)="tooltipSynchronisationService.hideSyncedPointers(firstChartView, secondChartView)"
+              [chartType]="'column'"
+              [series]="dailySeriesFirstGraph"
+              [showExportMenu]="true"
+              [xAxisData]="dailyChart.total.xAxis"
+              [yAxisName]="'Cases'"
+              [yAxisTitle]="''"
+              [yAxisType]="LinearLog"
+              [stacking]="true"
+            ></app-highcharts>
+          </mat-card>
+          <mat-card>
+            <app-highcharts
+              #secondChart
+              (mouseenter)="tooltipSynchronisationService.setSyncRules(firstChartView, secondChartView)"
+              (mousemove)="tooltipSynchronisationService.syncPointers(syncCharts.SecondChart, firstChartView, secondChartView)"
+              (mouseleave)="tooltipSynchronisationService.hideSyncedPointers(firstChartView, secondChartView)"
+              [chartType]="'column'"
+              [series]="dailySeriesSecondGraph"
+              [showExportMenu]="true"
+              [xAxisData]="dailyChart.total.xAxis"
+              [yAxisName]="'Cases'"
+              [yAxisTitle]="''"
+              [yAxisType]="LinearLog"
+              [stacking]="true"
+              [proportionChart]="true"
+            ></app-highcharts>
+          </mat-card>
+        </ng-template>
+      </mat-tab>
+      <mat-tab *ngIf="weeklyChart" label="WEEKLY CASES">
+        <ng-template matTabContent>
+          <mat-card>
+            <mat-card-title>Active and recovered cases</mat-card-title>
+            <app-highcharts
+              #firstChart
+              (mouseenter)="tooltipSynchronisationService.setSyncRules(firstChartView, secondChartView)"
+              (mousemove)="tooltipSynchronisationService.syncPointers(syncCharts.FirstChart, firstChartView, secondChartView)"
+              (mouseleave)="tooltipSynchronisationService.hideSyncedPointers(firstChartView, secondChartView)"
+              [chartType]="'column'"
+              [series]="weeklySeriesFirstGraph"
+              [showExportMenu]="true"
+              [xAxisData]="weeklyChart.total.xAxis"
+              [yAxisName]="'Cases'"
+              [yAxisTitle]="''"
+              [yAxisType]="LinearLog"
+              [stacking]="true"
+            ></app-highcharts>
+          </mat-card>
+          <mat-card>
+            <app-highcharts
+              #secondChart
+              (mouseenter)="tooltipSynchronisationService.setSyncRules(firstChartView, secondChartView)"
+              (mousemove)="tooltipSynchronisationService.syncPointers(syncCharts.SecondChart, firstChartView, secondChartView)"
+              (mouseleave)="tooltipSynchronisationService.hideSyncedPointers(firstChartView, secondChartView)"
+              [chartType]="'column'"
+              [series]="weeklySeriesSecondGraph"
+              [showExportMenu]="true"
+              [xAxisData]="weeklyChart.total.xAxis"
+              [yAxisName]="'Cases'"
+              [yAxisTitle]="''"
+              [yAxisType]="LinearLog"
+              [stacking]="true"
+              [proportionChart]="true"
+            ></app-highcharts>
+          </mat-card>
+        </ng-template>
+      </mat-tab>
+      <mat-tab *ngIf="cumulativeChart" label="CUMULATIVE CASES">
+        <ng-template matTabContent>
+          <mat-card>
+            <mat-card-title>Active and recovered cases</mat-card-title>
+            <app-highcharts
+              #firstChart
+              (mouseenter)="tooltipSynchronisationService.setSyncRules(firstChartView, secondChartView)"
+              (mousemove)="tooltipSynchronisationService.syncPointers(syncCharts.FirstChart, firstChartView, secondChartView)"
+              (mouseleave)="tooltipSynchronisationService.hideSyncedPointers(firstChartView, secondChartView)"
+              [chartType]="'column'"
+              [series]="cumulativeSeriesFirstGraph"
+              [showExportMenu]="true"
+              [xAxisData]="cumulativeChart.total.xAxis"
+              [yAxisName]="'Cases'"
+              [yAxisTitle]="''"
+              [yAxisType]="LinearLog"
+              [stacking]="true"
+            ></app-highcharts>
+          </mat-card>
+          <mat-card>
+            <app-highcharts
+              #secondChart
+              (mouseenter)="tooltipSynchronisationService.setSyncRules(firstChartView, secondChartView)"
+              (mousemove)="tooltipSynchronisationService.syncPointers(syncCharts.SecondChart, firstChartView, secondChartView)"
+              (mouseleave)="tooltipSynchronisationService.hideSyncedPointers(firstChartView, secondChartView)"
+              [chartType]="'column'"
+              [series]="cumulativeSeriesSecondGraph"
+              [showExportMenu]="true"
+              [xAxisData]="cumulativeChart.total.xAxis"
+              [yAxisName]="'Cases'"
+              [yAxisTitle]="''"
+              [yAxisType]="LinearLog"
+              [stacking]="true"
+              [proportionChart]="true"
+            ></app-highcharts>
+          </mat-card>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

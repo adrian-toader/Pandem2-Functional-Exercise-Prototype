@@ -1,0 +1,223 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<mat-card>
+  <div class="row">
+    <div class="col-10">
+      <h3 class="modelling-title-weight">Exploration</h3>
+    </div>
+    <div class="col-2 text-right">
+      <mat-icon class="modelling-info-icon" (click)="openInfoDialog()">info</mat-icon>
+    </div>
+  </div>
+
+  <div class="row">
+    <p class="col-12">Explore all the outputs of the scenario. In the Values box below select all the values you would like to see in the graph. If you wish to add a plotline select the value in the plotline selection box. Choose how to view the graph with the graph options buttons.</p>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-12" [ngClass]="{'modelling-exploration-empty': !modellingCharts.length}">
+      <button
+        *ngIf="!modellingCharts.length"
+        mat-raised-button
+        color="primary-button"
+        class="modelling-exloration-empty-add-button"
+        (click)="openAddGraphDialog()">
+        ADD GRAPH
+        <mat-icon class="icon-style">add_circle</mat-icon>
+      </button>
+
+      <ng-container *ngFor="let chart of modellingCharts; let index = index">
+        <mat-card class="modelling-exploration-loading-chart-card" *ngIf="chart === undefined">
+          <div class="mat-spinner-container">
+            <mat-spinner></mat-spinner>
+          </div>
+        </mat-card>
+        <mat-card *ngIf="chart && chart.series && chart.series.length" class="mb-4">
+          <mat-card-title *ngIf="!chart.isCollapsed">Selected outputs:</mat-card-title>
+          <mat-card-content>
+            <div class="row" *ngIf="!chart.isCollapsed">
+              <div class="col-xl-3">
+                <mat-form-field
+                  class="col-xl-12"
+                  [ngClass]="{'modelling-exploration-chip-list-fix': !chart.plotlines.length}"
+                  appearance="outline"
+                  (click)="openModifyGraph(index)">
+                  <mat-label>Plotlines:</mat-label>
+                  <mat-chip-list class="modelling-exploration-chip-list">
+                    <mat-chip *ngFor="let chip of chart.plotlines" (removed)="removePlotline(chip, index)">
+                      {{outputs.get(chip).label}}
+                      <span *ngIf="outputs.get(chip).ageLabel">
+                        &nbsp;{{outputs.get(chip).ageLabel}}
+                      </span>
+                      <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip>
+                  </mat-chip-list>
+                </mat-form-field>
+              </div>
+
+              <div class="col-xl-9">
+                <mat-form-field class="col-xl-12" appearance="outline" (click)="openModifyGraph(index)">
+                  <mat-label>Values:</mat-label>
+                  <mat-chip-list class="modelling-exploration-chip-list">
+                    <mat-chip *ngFor="let chip of chart.values" (removed)="removeValue(chip, index)">
+                      {{outputs.get(chip).label}}
+                      <span *ngIf="outputs.get(chip).ageLabel">
+                        &nbsp;{{outputs.get(chip).ageLabel}}
+                      </span>
+                      <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip>
+                  </mat-chip-list>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="!chart.isCollapsed">
+              <div class="col-xl-12">
+                <mat-button-toggle-group
+                  class="mr-3"
+                  (change)="changeChartType($event, index)"
+                  [value]="chart.chartType">
+                  <mat-button-toggle value="spline">
+                    Line Chart
+                  </mat-button-toggle>
+                  <mat-button-toggle value="column">
+                    Bar Chart
+                  </mat-button-toggle>
+                  <mat-button-toggle value="area">
+                    Area Chart
+                  </mat-button-toggle>
+                </mat-button-toggle-group>
+
+                <mat-button-toggle-group
+                  class="mr-3"
+                  (change)="changePlotType($event, index)"
+                  [value]="chart.chartPlotType">
+                  <mat-button-toggle value="linear">{{graphFilterButtons.LINEAR}}</mat-button-toggle>
+                  <mat-button-toggle value="logarithmic">{{graphFilterButtons.LOGARITHMIC}}</mat-button-toggle>
+                </mat-button-toggle-group>
+
+                <mat-button-toggle-group
+                  *ngIf="comparisonRawData"
+                  (change)="changeViewBy($event, index)"
+                  [value]="chart.viewBy">
+                  <mat-button-toggle value="scenario">
+                    View by scenario
+                  </mat-button-toggle>
+                  <mat-button-toggle value="indicator">
+                    View by indicator
+                  </mat-button-toggle>
+                </mat-button-toggle-group>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xl-12">
+                <div class="modelling-exploration-card">
+                  <div class="row">
+                    <ng-container *ngIf="!chart.viewBy || chart.viewBy === 'scenario'">
+                      <!-- Baseline scenario -->
+                      <div [ngClass]="{'col-xl-5': comparisonRawData, 'col-xl-10': !comparisonRawData}">
+                        <div class="summary-section__name-icon-container mb-3" *ngIf="!chart.isCollapsed">
+                          Baseline scenario: {{rawData.name}}
+                        </div>
+                        <app-highcharts
+                          #chartContainer
+                          *ngIf="!chart.isCollapsed"
+                          [chartType]="chart.chartType"
+                          [yAxisType]="chart.chartPlotType"
+                          [yAxisExtra]="chart.plotlineData"
+                          [series]="chart.series"
+                          [showExportMenu]="true"
+                          [xAxisData]="xAxis"
+                          [skipYAxisMinValue]="true">
+                        </app-highcharts>
+                      </div>
+
+                      <!-- Comparison scenario -->
+                      <div class="col-xl-5" *ngIf="comparisonRawData">
+                        <div class="summary-section__name-icon-container mb-3" *ngIf="!chart.isCollapsed">
+                          Alternative scenario: {{comparisonRawData.name}}
+                        </div>
+                        <app-highcharts
+                          #chartContainer
+                          *ngIf="!chart.isCollapsed"
+                          [chartType]="chart.chartType"
+                          [yAxisType]="chart.chartPlotType"
+                          [yAxisExtra]="chart.comparisonPlotlineData"
+                          [series]="chart.comparisonSeries"
+                          [showExportMenu]="true"
+                          [xAxisData]="xAxis"
+                          [skipYAxisMinValue]="true">
+                        </app-highcharts>
+                      </div>
+                    </ng-container>
+
+                    <div class="col-xl-10 d-flex flex-wrap" *ngIf="chart.viewBy === 'indicator'">
+                      <ng-container *ngFor="let indicator of chart.indicators">
+                        <div class="col-md-4">
+                          <app-highcharts
+                            #chartContainer
+                            *ngIf="!chart.isCollapsed"
+                            [chartType]="chart.chartType"
+                            [yAxisType]="chart.chartPlotType"
+                            [series]="indicator.series"
+                            [chartTitle]="indicator.title"
+                            [showExportMenu]="true"
+                            [xAxisData]="xAxis"
+                            [skipYAxisMinValue]="true">
+                          </app-highcharts>
+                        </div>
+                      </ng-container>
+                    </div>
+
+                    <div class="col-xl-2">
+                      <app-modelling-card-manager
+                        [index]="index"
+                        [lastIndex]="modellingCharts.length - 1"
+                        [chartPage]="this"
+                        [data]="data"
+                        [isCollapsed]="chart.isCollapsed"
+                        [isScenarioSaved]="isScenarioSaved"
+                        [isCopyDisabled]="chart.isCopiedToReport"
+                        [showCopyWarning]="!isScenarioSaved"
+                        (collapseEvent)="collapseIndex($event)"
+                        (moveUpEvent)="moveUpIndex($event)"
+                        (moveDownEvent)="moveDownIndex($event)"
+                        (removeEvent)="removeIndex($event)"
+                        (copyToReportEvent)="copyToReport($event)">
+                      </app-modelling-card-manager>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </ng-container>
+    </div>
+  </div>
+</mat-card>

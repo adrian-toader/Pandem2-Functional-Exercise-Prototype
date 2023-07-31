@@ -1,0 +1,90 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<button mat-icon-button class="dialog-close-button" [mat-dialog-close]="true">
+  <mat-icon aria-hidden="false" aria-label="close button">close</mat-icon>
+</button>
+<mat-dialog-content class="main-card-manager-dialog">
+  <div class="row">
+    <div class="col-12">
+      <div *ngIf="!uploadReady" class="mat-spinner-container">
+        <mat-spinner></mat-spinner>
+      </div>
+      <div *ngIf="uploadReady">
+        <mat-card-title>
+          INTERVENTION SETTINGS - EDIT
+        </mat-card-title>
+
+        <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="pt-4">
+          <div class="form-group edit-dialog-form-group">
+            <div>
+              <label for="location">Region</label>
+              <input formControlName="location" name="location" class="form-control" readonly>
+            </div>
+            <div>
+              <label for="sources">Sources</label>
+              <input formControlName="sources" name="sources" class="form-control" readonly>
+            </div>
+            <div>
+              <label for="interventionName">Intervention Name</label>
+              <input formControlName="interventionName" name="interventionName" class="form-control" readonly>
+            </div>
+            <div>
+              <label for="interventionDescription">Intervention Description*</label>
+              <input formControlName="interventionDescription" name="interventionDescription" class="form-control">
+            </div>
+            <div>
+              <mat-label>
+                Date Range
+                <mat-icon style="font-size: 1em !important; height: 1em !important;">calendar_today</mat-icon>
+              </mat-label>
+              <div class="d-flex">
+                <mat-date-range-input [rangePicker]="picker" class="date-select-input">
+                  <input matStartDate formControlName="start_date" placeholder="Start date" (click)="picker.open()" readonly>
+                  <input matEndDate formControlName="end_date" placeholder="End date" (click)="picker.open()" readonly>
+                </mat-date-range-input>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="editForm.get('interventionName').hasError('required')" class="mt-0">
+            <span style="color: red">Intervention name is required</span>
+          </div>
+          <div *ngIf="editForm.get('interventionDescription').hasError('required')" class="mt-0">
+            <span style="color: red">Intervention description is required</span>
+          </div>
+          <button mat-raised-button class="my-2 col-3 px-5" color="secondary-button" [mat-dialog-close]="true">
+            <div class="row justify-content-between align-items-center">
+              <div>Cancel</div>
+            </div>
+          </button>
+          <button mat-raised-button class="my-2 col-3 px-5" color="primary-button" type="button" (click)='onSubmit()'  data-dismiss="createLabel">
+            <div class="row justify-content-between align-items-center">
+              <div>Save</div>
+              <mat-icon>save_alt</mat-icon>
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.idea/
+src/config/config.json
+.vscode
+logs/

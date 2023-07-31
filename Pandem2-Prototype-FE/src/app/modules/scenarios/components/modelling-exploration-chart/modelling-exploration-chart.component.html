@@ -1,0 +1,179 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+
+<mat-card class="modelling-exploration-loading-chart-card" *ngIf="chart === undefined">
+  <div class="mat-spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</mat-card>
+<mat-card *ngIf="chart && chart.series && chart.series.length" class="mb-4 modelling-exploration-full-card">
+  <mat-card-title>Modelling Exploration</mat-card-title>
+  <mat-card-content>
+    <div class="row" *ngIf="!chart.isCollapsed">
+      <div class="col-xl-3">
+        <mat-form-field
+          class="col-xl-12"
+          [ngClass]="{'modelling-exploration-chip-list-fix': !chart.plotlines.length}"
+          appearance="outline"
+          (click)="openModifyGraph()">
+          <mat-label>Plotlines:</mat-label>
+          <mat-chip-list class="modelling-exploration-chip-list">
+            <mat-chip *ngFor="let chip of chart.plotlines" (removed)="removePlotline(chip)">
+              {{outputs.get(chip).label}}
+              <span *ngIf="outputs.get(chip).ageLabel">
+                &nbsp;{{outputs.get(chip).ageLabel}}
+              </span>
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          </mat-chip-list>
+        </mat-form-field>
+      </div>
+
+      <div class="col-xl-9">
+        <mat-form-field class="col-xl-12" appearance="outline" (click)="openModifyGraph()">
+          <mat-label>Values:</mat-label>
+          <mat-chip-list class="modelling-exploration-chip-list">
+            <mat-chip *ngFor="let chip of chart.values" (removed)="removeValue(chip)">
+              {{outputs.get(chip).label}}
+              <span *ngIf="outputs.get(chip).ageLabel">
+                &nbsp;{{outputs.get(chip).ageLabel}}
+              </span>
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          </mat-chip-list>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="!chart.isCollapsed">
+      <div class="col-xl-12">
+        <mat-button-toggle-group
+          class="mr-3"
+          (change)="changeChartType($event)"
+          [value]="chart.chartType">
+          <mat-button-toggle value="spline">
+            Line Chart
+          </mat-button-toggle>
+          <mat-button-toggle value="column">
+            Bar Chart
+          </mat-button-toggle>
+          <mat-button-toggle value="area">
+            Area Chart
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-button-toggle-group
+          class="mr-3"
+          (change)="changePlotType($event)"
+          [value]="chart.chartPlotType">
+          <mat-button-toggle value="linear">{{graphFilterButtons.LINEAR}}</mat-button-toggle>
+          <mat-button-toggle value="logarithmic">{{graphFilterButtons.LOGARITHMIC}}</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-button-toggle-group
+          *ngIf="comparisonRawData"
+          (change)="changeViewBy($event)"
+          [value]="chart.viewBy">
+          <mat-button-toggle value="scenario">
+            View by scenario
+          </mat-button-toggle>
+          <mat-button-toggle value="indicator">
+            View by indicator
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="modelling-exploration-card">
+          <div class="row">
+            <ng-container *ngIf="!chart.viewBy || chart.viewBy === 'scenario'">
+              <!-- Comparison Scenario -->
+              <div class="col-xl-6" *ngIf="comparisonRawData">
+                <div class="summary-section__name-icon-container mb-3" *ngIf="!chart.isCollapsed">
+                  Baseline scenario: {{comparisonRawData.name}}
+                </div>
+                <app-highcharts
+                  #chartContainer
+                  *ngIf="!chart.isCollapsed"
+                  [chartType]="chart.chartType"
+                  [yAxisType]="chart.chartPlotType"
+                  [yAxisExtra]="chart.comparisonPlotlineData"
+                  [series]="chart.comparisonSeries"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+              <!-- Current Scenario -->
+              <div *ngIf="rawData" [class.col-xl-6]="rawData.comparisonScenarioId" [class.col-xl-12]="!rawData.comparisonScenarioId">
+                <div class="summary-section__name-icon-container mb-3" *ngIf="!chart.isCollapsed">
+                  <ng-container *ngIf="comparisonRawData">
+                    Alternative scenario: {{rawData.name}}
+                  </ng-container>
+                  <ng-container *ngIf="!comparisonRawData">
+                    Baseline scenario: {{rawData.name}}
+                  </ng-container>
+                </div>
+                <app-highcharts
+                  #chartContainer
+                  *ngIf="!chart.isCollapsed"
+                  [chartType]="chart.chartType"
+                  [yAxisType]="chart.chartPlotType"
+                  [yAxisExtra]="chart.plotlineData"
+                  [series]="chart.series"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+            </ng-container>
+
+            <div class="col-xl-12 d-flex flex-wrap" *ngIf="chart.viewBy === 'indicator'">
+              <ng-container *ngFor="let indicator of chart.indicators">
+                <div class="col-md-4">
+                  <app-highcharts
+                    #chartContainer
+                    *ngIf="!chart.isCollapsed"
+                    [chartType]="chart.chartType"
+                    [yAxisType]="chart.chartPlotType"
+                    [series]="indicator.series"
+                    [chartTitle]="indicator.title"
+                    [showExportMenu]="true"
+                    [xAxisData]="xAxis"
+                    [skipYAxisMinValue]="true">
+                  </app-highcharts>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

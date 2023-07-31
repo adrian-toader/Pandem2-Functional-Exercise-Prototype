@@ -1,0 +1,185 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xl-12">
+      <app-topnav>
+        <ng-container dynamic-section>
+          <app-breadcrumbs [items]="breadcrumbs"></app-breadcrumbs>
+        </ng-container>
+      </app-topnav>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-xl-12">
+      <form
+        #form="ngForm"
+        [class.form-view-only]="viewOnly"
+        class="row page-content form-section"
+        (submit)="modifyUser(form)">
+
+
+        <div class="col-md-12 form-content">
+
+          <mat-tab-group class="page-tabs-navbar">
+
+            <mat-tab [label]="'Details'">
+
+              <mat-card class="page-section">
+                <div fxLayout="column">
+                  <div class="form-inline">
+                    <app-form-input class="mr-4"
+                                    name="first_name"
+                                    [(ngModel)]="user.firstName"
+                                    [placeholder]="'First Name'"
+                                    tooltip="LNG_USER_FIELD_LABEL_FIRST_NAME_DESCRIPTION"
+                                    required="true"
+                                    [disabled]="viewOnly">
+                    </app-form-input>
+
+                    <app-form-input class="mr-4"
+                                    name="last_name"
+                                    [(ngModel)]="user.lastName"
+                                    [placeholder]="'Last Name'"
+                                    tooltip="LNG_USER_FIELD_LABEL_LAST_NAME_DESCRIPTION"
+                                    required="true"
+                                    [disabled]="viewOnly">
+                    </app-form-input>
+
+                    <app-form-input class="mr-4"
+                                    name="email"
+                                    [(ngModel)]="user.email"
+                                    [placeholder]="'Email'"
+                                    tooltip="LNG_USER_FIELD_LABEL_EMAIL_DESCRIPTION"
+                                    required="true"
+                                    app-email-validator
+                                    [disabled]="viewOnly">
+                    </app-form-input>
+
+                    <app-form-select #countriesList
+                                     class="mr-4"
+                                     name="location"
+                                     [(ngModel)]="user.location"
+                                     [placeholder]="'Location'"
+                                     tooltip="Location"
+                                     required="true"
+                                     [options]=" countriesList$ | async"
+                                     optionLabelKey="name"
+                                     optionValueKey="code"
+                                     optionTooltipKey="description"
+                                     [disabled]="viewOnly"
+                                     multiple="false">
+                    </app-form-select>
+
+                    <app-form-select class="mr-4"
+                                     name="roleId"
+                                     [(ngModel)]="user.roleId"
+                                     [placeholder]="'User Role'"
+                                     tooltip="User Role"
+                                     required="true"
+                                     [options]="(rolesList$ | async)?.length ? (rolesList$ | async) : !user.role ? [] : [user.role]"
+                                     optionLabelKey="name"
+                                     optionValueKey="id"
+                                     optionTooltipKey="description"
+                                     [disabled]="authUser.id === user.id || !(rolesList$ | async)?.length || viewOnly"
+                                     multiple="false">
+                    </app-form-select>
+                  </div>
+                  <div class="d-inline-flex">
+                    <mat-form-field class="mr-4">
+                      <input matInput [matDatepicker]="dataStartDate" name="data_start_date"
+                             [(ngModel)]="user.settings.data_interval.start_date"
+                             [placeholder]="'Data Start Date'" required="false" [disabled]="viewOnly"
+                      >
+                      <mat-datepicker-toggle matSuffix [for]="dataStartDate"></mat-datepicker-toggle>
+                      <mat-datepicker #dataStartDate></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field class="mr-4">
+                      <input matInput [matDatepicker]="dataEndDate" name="data_end_date"
+                             [(ngModel)]="user.settings.data_interval.end_date"
+                             [placeholder]="'Data End Date'" required="false" [disabled]="viewOnly">
+                      <mat-datepicker-toggle matSuffix [for]="dataEndDate"></mat-datepicker-toggle>
+                      <mat-datepicker #dataEndDate></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div class="form-inline">
+                    <app-form-input class="mr-4"
+                                    name="color_palette1"
+                                    type="color"
+                                    [(ngModel)]="user.settings.color_palette[0]"
+                                    [placeholder]="'Color Palette 1'"
+                                    required="false"
+                                    [disabled]="viewOnly">
+                    </app-form-input>
+                    <app-form-input class="mr-4"
+                                    name="color_palette2"
+                                    type="color"
+                                    [(ngModel)]="user.settings.color_palette[1]"
+                                    [placeholder]="'Color Palette 2'"
+                                    required="false"
+                                    [disabled]="viewOnly">
+                    </app-form-input>
+                  </div>
+                </div>
+              </mat-card>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+
+        <div class="col-md-12 form-actions">
+          <button
+            data-ngIf="viewOnly && UserModel.canModify(authUser) && user.id && user.id !== authUser.id"
+            *ngIf="viewOnly && user.id && user.id !== authUser.id"
+            mat-raised-button
+            type="button"
+            color="accent"
+            [routerLink]="['/users', userId, 'modify']">
+            {{'Edit'}}
+          </button>
+
+          <ng-container *ngIf="!viewOnly">
+            <button mat-raised-button color="accent" type="submit">
+              {{'Save'}}
+            </button>
+            <button
+              data-ngIf="UserModel.canList(authUser)"
+
+              type="button"
+              [routerLink]="'/users'"
+              mat-raised-button>
+              {{'Cancel'}}
+            </button>
+            <button
+                    type="button"
+                    mat-stroked-button
+                    (click)="resetDate(form)"
+            >
+              {{'Reset Dates'}}
+            </button>
+          </ng-container>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

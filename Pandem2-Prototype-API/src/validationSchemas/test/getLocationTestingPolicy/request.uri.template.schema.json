@@ -1,0 +1,14 @@
+{
+  "$id": "test.getLocationTestingPolicy.request.uri.template.schema",
+  "description": "Get testing policy for requested locations - request params schema",
+  "type": "object",
+  "properties": {
+    "locationCode": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "locationCode"
+  ]
+}

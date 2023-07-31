@@ -1,0 +1,129 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<mat-card class="summary-section">
+  <div *ngIf="isLoading()" class="mat-spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div *ngIf="isLoaded()">
+    <div class="summary-section__name-icon-container">
+      <div>
+        Contact tracing
+        <ng-container *ngIf="configuredDateInterval">(Current data interval is configured to {{configuredStartDate}}
+          - {{configuredEndDate}})
+        </ng-container>
+      </div>
+      <div>
+        <mat-icon (click)="showInfo = !showInfo">info</mat-icon>
+      </div>
+    </div>
+    <mat-card-title class="text-center text-sm-left ">
+      Contacts for CT
+    </mat-card-title>
+    <mat-card-subtitle class="text-center text-sm-left ">
+      <app-sources
+        [sourceType]="SourceType.SUMMARY"
+        [sources]="sources"></app-sources>
+    </mat-card-subtitle>
+    <mat-card-content>
+      <p *ngIf="showInfo" class="text-center text-sm-left info-text">
+        W.I.P
+      </p>
+      <mat-list>
+        <mat-list-item>
+          <div class="col-xl-8 label">
+            Number of contacts identified - last 7 days
+          </div>
+          <div class="col-xl-4 value text-right">
+            {{ numberOfContactIdentifiedCurrentWeek}}
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <div class="col-xl-8 label">
+            <br/>
+            Number of contacts identified - 7-14 days ago
+          </div>
+          <div class="col-xl-4 value text-right">
+            {{ numberOfContactIdentifiedLastWeek}}
+            <br/>
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <div class="col-xl-8 label">
+            <br/>
+            Number of contacts identified and reached
+          </div>
+          <div class="col-xl-4 value text-right">
+            {{ numberOfContactIdentifiedAndReached}} ({{numberOfContactIdentifiedAndReachedPercentage| number : defaultNumberFormat}} %)
+            <br/>
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <div class="col-xl-8 label">
+            <br/>
+            Number of contacts identified and reached within a day
+          </div>
+          <div class="col-xl-4 value text-right">
+            {{ numberOfContactIdentifiedAndReachedWithinADay}} ({{numberOfContactIdentifiedAndReachedWithinADayPercentage| number : defaultNumberFormat}} %)
+            <br/>
+          </div>
+        </mat-list-item>
+        <mat-divider class="mat-divider-shadow"></mat-divider>
+        <mat-list-item>
+          <mat-card-title class="summary-section__name-icon-container text-right">
+            <br/>
+            <mat-icon (click)="showInfoPolicy = !showInfoPolicy">info</mat-icon>
+            <div class="text-center">
+              CURRENT CONTACT TRACING POLICY
+            </div>
+            <p *ngIf="showInfoPolicy" class="text-center text-sm-left info-text">
+              W.I.P
+            </p>
+          </mat-card-title>
+        </mat-list-item>
+        <mat-list-item>
+          <div class="col-xl-6 label">
+            <p>
+              Current Policy <br>
+            ({{'10-11-2021'}})
+            </p>
+          </div>
+          <div class="col-xl-6 label">
+                <p style="text-align:center; color:#308dc1"> {{policy}} </p>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+    <mat-card-subtitle>
+      <p> OxCGRT collects publicly available information on indicators of government response.</p>
+      <p> Policies <br>
+        0 - No contact tracing <br>
+        1 - Limited contact tracing - not done for all cases <br>
+        2 - Comprehensive contact tracing - done for all cases <br>
+        No data
+      </p>
+    </mat-card-subtitle>
+  </div>
+</mat-card>

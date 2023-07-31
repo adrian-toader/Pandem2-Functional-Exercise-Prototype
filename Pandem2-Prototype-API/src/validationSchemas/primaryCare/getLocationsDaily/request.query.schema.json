@@ -1,0 +1,42 @@
+{
+  "$id": "primaryCare.getLocationsDaily.request.query.schema",
+  "description": "Get total number of primary care for a time interval, for requested locations - request query schema",
+  "type": "object",
+  "properties": {
+    "subcategory": {
+      "$ref": "/primaryCare#/definitions/subcategory"
+    },
+    "location": {
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "disease_type": {
+      "$ref": "/primaryCare#/definitions/disease_type"
+    },
+    "split": {
+      "type": "string",
+      "enum": [
+        "disease_type"
+      ]
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "subcategory",
+    "location"
+  ]
+}
