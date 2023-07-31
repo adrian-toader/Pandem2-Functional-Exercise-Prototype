@@ -1,0 +1,15 @@
+{
+  "$id": "test.getLocationTestingPolicy.request.uri.query.schema",
+  "description": "Get testing policy for requested locations - request query schema",
+  "type": "object",
+  "properties": {
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

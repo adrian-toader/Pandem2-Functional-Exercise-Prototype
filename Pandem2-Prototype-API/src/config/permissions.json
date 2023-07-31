@@ -1,0 +1,23 @@
+[
+  "role_all",
+  "user_all",
+  "nuts_all",
+  "import_all",
+  "case_all",
+  "contact_all",
+  "patient_all",
+  "bed_all",
+  "death_all",
+  "vaccine_all",
+  "test_all",
+  "variant_all",
+  "strain_all",
+  "human_resources_all",
+  "survey_all",
+  "participatory_surveillance_all",
+  "modelling_all",
+  "social_media_analysis_all",
+  "report_all",
+  "primary_care_all",
+  "intervention_all"
+]

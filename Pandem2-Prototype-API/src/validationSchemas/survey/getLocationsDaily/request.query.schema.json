@@ -1,0 +1,37 @@
+{
+  "$id": "survey.getLocationsDaily.request.query.schema",
+  "description": "Get daily surveys grouped by locations - request query schema",
+  "type": "object",
+  "properties": {
+    "location": {
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "surveyId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "questionId": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "location"
+  ]
+}

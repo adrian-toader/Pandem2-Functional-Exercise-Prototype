@@ -1,0 +1,358 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<mat-card>
+  <div class="row">
+    <div class="col-10">
+      <h3 class="modelling-title-weight">Resource Gap Notifications</h3>
+    </div>
+    <div class="col-2 text-right">
+      <mat-icon class="modelling-info-icon" (click)="openInfoDialog()">info</mat-icon>
+    </div>
+  </div>
+
+  <div class="row">
+    <p class="col-12">Estimate and analyse the gaps affecting admissions to ward and ICU. See what component resources cause the gaps. Component resources can be viewed by expanding the notification cards.</p>
+  </div>
+
+  <div class="row" *ngIf="!isCollapsed">
+    <!-- Baseline scenario -->
+    <div *ngIf="rawData" class="d-flex flex-wrap p-0" [ngClass]="{'col-xl-6 resource-gap-comparison-row': comparisonRawData, 'col-xl-12': !comparisonRawData}">
+      <div [ngClass]="{'col-xl-6': !comparisonRawData, 'col-xl-12': comparisonRawData}">
+        <mat-card class="resource-gap-card" [ngClass]="{'resource-gap-card-grow': comparisonRawData}">
+          <div class="summary-section__name-icon-container mb-3">
+            Baseline scenario: {{rawData.name}}
+          </div>
+          <mat-card-title>
+            <div class="d-flex justify-content-between">
+              <span>Staffed Ward Beds Available</span>
+              <button class="resource-gap-expand-button" (click)="expandWard()">
+                <mat-icon *ngIf="!isWardExpanded">keyboard_arrow_down</mat-icon>
+                <mat-icon *ngIf="isWardExpanded">keyboard_arrow_up</mat-icon>
+              </button>
+            </div>
+          </mat-card-title>
+          <mat-card-content *ngIf="data.size">
+            <div class="resource-gap-warning mb-3" *ngIf="staffedWardBedsWarning !== -1">
+              <mat-icon>warning</mat-icon>
+              A gap in staffed ward beds appears on
+              <span>Day {{staffedWardBedsWarning}}</span>
+            </div>
+            <div class="resource-gap-warning-empty mb-3" *ngIf="staffedWardBedsWarning === -1 && staffedEquippedICUBedsWarning !== -1"></div>
+            <app-highcharts
+              [chartType]="'area'"
+              [series]="staffedWardBedsAvailable"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'Staffed Ward Beds Available'"
+              [height]="300"
+              [skipYAxisMinValue]="true">
+            </app-highcharts>
+            <div class="row" *ngIf="isWardExpanded">
+              <div class="col-md-6">
+                <div class="resource-gap-warning mb-3" *ngIf="physicalWardBedsWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{physicalWardBedsWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3"*ngIf="physicalWardBedsWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="physicalWardBeds"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'Physical Ward Beds'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+              <div class="col-md-6">
+                <div class="resource-gap-warning mb-3" *ngIf="wardNursesWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{wardNursesWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3"*ngIf="wardNursesWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="wardNurses"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'Ward Nurses'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div [ngClass]="{'col-xl-6': !comparisonRawData, 'col-xl-12': comparisonRawData}">
+        <mat-card class="resource-gap-card" [ngClass]="{'resource-gap-card-grow': comparisonRawData}">
+          <div class="summary-section__name-icon-container mb-3">
+            Baseline scenario: {{rawData.name}}
+          </div>
+          <mat-card-title>
+            <div class="d-flex justify-content-between">
+              <span>Staffed Equipped ICU Beds Available</span>
+              <button class="resource-gap-expand-button" (click)="expandICU()">
+                <mat-icon *ngIf="!isICUExpanded">keyboard_arrow_down</mat-icon>
+                <mat-icon *ngIf="isICUExpanded">keyboard_arrow_up</mat-icon>
+              </button>
+            </div>
+          </mat-card-title>
+          <mat-card-content *ngIf="data.size">
+            <div class="resource-gap-warning mb-3" *ngIf="staffedEquippedICUBedsWarning !== -1">
+              <mat-icon>warning</mat-icon>
+              A gap in staffed ward beds appears on
+              <span>Day {{staffedEquippedICUBedsWarning}}</span>
+            </div>
+            <div class="resource-gap-warning-empty mb-3" *ngIf="staffedWardBedsWarning !== -1 && staffedEquippedICUBedsWarning === -1"></div>
+            <app-highcharts
+              [chartType]="'area'"
+              [series]="staffedEquippedICUBeds"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'Staffed Equipped ICU Beds'"
+              [height]="300"
+              [skipYAxisMinValue]="true">
+            </app-highcharts>
+            <div class="row" *ngIf="isICUExpanded">
+              <div class="col-md-4">
+                <div class="resource-gap-warning mb-3" *ngIf="physicalICUBedsWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{physicalICUBedsWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3"*ngIf="physicalICUBedsWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="physicalICUBeds"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'Physical ICU Beds'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+              <div class="col-md-4">
+                <div class="resource-gap-warning mb-3" *ngIf="ICUNursesWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{ICUNursesWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3"*ngIf="ICUNursesWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="ICUNurses"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'ICU Nurses'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+              <div class="col-md-4">
+                <div class="resource-gap-warning mb-3" *ngIf="ventilatorsWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{ventilatorsWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3"*ngIf="ventilatorsWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="ventilators"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'Ventilators'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Comparison scenario -->
+    <div *ngIf="comparisonRawData" class="d-flex flex-wrap p-0 col-xl-6 resource-gap-comparison-row">
+      <div class="col-xl-12">
+        <mat-card class="resource-gap-card" [ngClass]="{'resource-gap-card-grow': comparisonRawData}">
+          <div class="summary-section__name-icon-container mb-3">
+            Alternative scenario: {{comparisonRawData.name}}
+          </div>
+          <mat-card-title>
+            <div class="d-flex justify-content-between">
+              <span>Staffed Ward Beds Available</span>
+              <button class="resource-gap-expand-button" (click)="expandWard()">
+                <mat-icon *ngIf="!isWardExpanded">keyboard_arrow_down</mat-icon>
+                <mat-icon *ngIf="isWardExpanded">keyboard_arrow_up</mat-icon>
+              </button>
+            </div>
+          </mat-card-title>
+          <mat-card-content *ngIf="comparisonData.size">
+            <div class="resource-gap-warning mb-3" *ngIf="compStaffedWardBedsWarning !== -1">
+              <mat-icon>warning</mat-icon>
+              A gap in staffed ward beds appears on
+              <span>Day {{compStaffedWardBedsWarning}}</span>
+            </div>
+            <div class="resource-gap-warning-empty mb-3" *ngIf="compStaffedWardBedsWarning === -1 && compStaffedEquippedICUBedsWarning !== -1"></div>
+            <app-highcharts
+              [chartType]="'area'"
+              [series]="compStaffedWardBedsAvailable"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'Staffed Ward Beds Available'"
+              [height]="300"
+              [skipYAxisMinValue]="true">
+            </app-highcharts>
+            <div class="row" *ngIf="isWardExpanded">
+              <div class="col-md-6">
+                <div class="resource-gap-warning mb-3" *ngIf="compPhysicalWardBedsWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{compPhysicalWardBedsWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3" *ngIf="compPhysicalWardBedsWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="compPhysicalWardBeds"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'Physical Ward Beds'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+              <div class="col-md-6">
+                <div class="resource-gap-warning mb-3" *ngIf="compWardNursesWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{compWardNursesWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3" *ngIf="compWardNursesWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="compWardNurses"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'Ward Nurses'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="col-xl-12">
+        <mat-card class="resource-gap-card" [ngClass]="{'resource-gap-card-grow': comparisonRawData}">
+          <div class="summary-section__name-icon-container mb-3">
+            Alternative scenario: {{comparisonRawData.name}}
+          </div>
+          <mat-card-title>
+            <div class="d-flex justify-content-between">
+              <span>Staffed Equipped ICU Beds Available</span>
+              <button class="resource-gap-expand-button" (click)="expandICU()">
+                <mat-icon *ngIf="!isICUExpanded">keyboard_arrow_down</mat-icon>
+                <mat-icon *ngIf="isICUExpanded">keyboard_arrow_up</mat-icon>
+              </button>
+            </div>
+          </mat-card-title>
+          <mat-card-content *ngIf="comparisonData.size">
+            <div class="resource-gap-warning mb-3" *ngIf="compStaffedEquippedICUBedsWarning !== -1">
+              <mat-icon>warning</mat-icon>
+              A gap in staffed ward beds appears on
+              <span>Day {{compStaffedEquippedICUBedsWarning}}</span>
+            </div>
+            <div class="resource-gap-warning-empty mb-3" *ngIf="compStaffedWardBedsWarning !== -1 && compStaffedEquippedICUBedsWarning === -1"></div>
+            <app-highcharts
+              [chartType]="'area'"
+              [series]="compStaffedEquippedICUBeds"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'Staffed Equipped ICU Beds'"
+              [height]="300"
+              [skipYAxisMinValue]="true">
+            </app-highcharts>
+            <div class="row" *ngIf="isICUExpanded">
+              <div class="col-md-4">
+                <div class="resource-gap-warning mb-3" *ngIf="compPhysicalICUBedsWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{compPhysicalICUBedsWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3" *ngIf="compPhysicalICUBedsWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="compPhysicalICUBeds"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'Physical ICU Beds'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+              <div class="col-md-4">
+                <div class="resource-gap-warning mb-3" *ngIf="compICUNursesWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{compICUNursesWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3" *ngIf="compICUNursesWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="compICUNurses"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'ICU Nurses'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+              <div class="col-md-4">
+                <div class="resource-gap-warning mb-3" *ngIf="compVentilatorsWarning !== -1">
+                  <mat-icon>warning</mat-icon>
+                  A gap appears on
+                  <span>Day {{compVentilatorsWarning}}</span>
+                </div>
+                <div class="resource-gap-warning-empty mb-3" *ngIf="compVentilatorsWarning === -1"></div>
+                <app-highcharts
+                  [chartType]="'area'"
+                  [series]="compVentilators"
+                  [showExportMenu]="true"
+                  [xAxisData]="xAxis"
+                  [chartTitle]="'Ventilators'"
+                  [height]="300"
+                  [skipYAxisMinValue]="true">
+                </app-highcharts>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</mat-card>

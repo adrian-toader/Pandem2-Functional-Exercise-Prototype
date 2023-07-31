@@ -1,0 +1,18 @@
+{
+  "$id": "/base#",
+  "definitions": {
+    "mongoID": {
+      "description": "MongoDB Object Id",
+      "type": "string",
+      "minLength": 24,
+      "maxLength": 24
+    },
+    "period_type": {
+      "type": "string",
+      "enum": [
+        "Daily",
+        "Weekly"
+      ]
+    }
+  }
+}

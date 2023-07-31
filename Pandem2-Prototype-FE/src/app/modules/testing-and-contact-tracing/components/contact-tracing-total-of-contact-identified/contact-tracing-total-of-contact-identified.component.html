@@ -1,0 +1,109 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<mat-card>
+  <mat-card-title>
+    <div class="row">
+      <div class="col-md-6 text-center text-sm-left">
+        Total of contacts identified and reached for contact tracing (weekly)
+      </div>
+      <div class="col-md-6 text-center text-sm-left text-md-right" *ngIf="!isCollapsed">
+        <mat-slide-toggle
+          (change)="setContactTracingType($event)"
+          [(ngModel)]="isIdentifiedContactsChecked"
+          [disabled]="isIdentifiedContactsDisabled"
+          [labelPosition]="'before'"
+          class="mr-5 identified_contacts"
+        ><p style="text-align:center">IDENTIFIED <br> CONTACTS</p></mat-slide-toggle>
+        <mat-slide-toggle
+          (change)="setContactTracingType($event)"
+          [(ngModel)]="isReachedContactsChecked"
+          [disabled]="isReachedContactsDisabled"
+          [labelPosition]="'before'"
+          class="mr-5 reached_contacts"
+        ><p style="text-align:center">REACHED <br>CONTACTS</p></mat-slide-toggle>
+        <mat-slide-toggle
+          (change)="setContactTracingType($event)"
+          [(ngModel)]="isReachedInADayChecked"
+          [disabled]="isReachedInADayDisabled"
+          [labelPosition]="'before'"
+          class="reached_in_a_day"
+        ><p style="text-align:center">REACHED <br>IN A DAY</p></mat-slide-toggle>
+      </div>
+    </div>
+  </mat-card-title>
+  <br/>
+  <mat-card-subtitle>
+    <div class="row">
+      <div class="col-md-6 mb-4 text-center text-sm-left">
+        The purpose of identifying and managing the contacts of a case is to support early diagnosis and to
+        interrupt onward transmission through the rapid identification and management of secondary cases (contacts)
+        that may arise after transmission from the primary case.
+      </div>
+      <div class="col-md-6 mb-4 text-center text-sm-left text-md-right">
+        `<ng-container *ngIf="lastDate">Last values obtained on {{lastDate.format('D/MM/YYYY')}}. Is updated on a
+          daily basis.
+        </ng-container>
+        <br/>
+        Source:
+        <ng-container *ngIf="sources?.length">
+          <ng-container *ngFor="let source of sources, index as i"
+                        class="mb-4">{{i !== 0 ? ', ' : ''}}{{source.name}}</ng-container>
+        </ng-container>
+        <ng-container *ngIf="!sources?.length">
+          Synthesized Data
+        </ng-container>
+      </div>
+    </div>
+  </mat-card-subtitle>
+  <mat-card-content *ngIf="!isCollapsed">
+    <div class="form-inline">
+      <div class="form-group mr-4 mb-4">
+      <app-chart-type
+        (chartTypeChanged)="changeChartType($event)"
+        [chartTypes]="chartTypes"
+        [selectedChartType]="chartType">
+      </app-chart-type>
+    </div>
+    <div class="form-group mr-4 mb-4">
+        <app-chart-time-interval (intervalChanged)="changeTimeInterval($event)"
+                                 [intervalOptions]="chartsIntervalOptions"></app-chart-time-interval>
+      </div>
+    </div>
+    <div *ngIf="isLoading()" class="mat-spinner-container loading-chart-placeholder">
+      <mat-spinner></mat-spinner>
+    </div>
+    <mat-card
+      *ngIf="isLoaded() && weeklyChartIdentifiedContacts"
+      class="charts-container">
+      <mat-card-content>
+        <app-highcharts
+          #chart
+          [xAxisData]="weeklyChartIdentifiedContacts.total.xAxis"
+          [series]="weeklySeries"
+          [showExportMenu]="true"
+          [plotOptions]="chartPlotOptions"
+        ></app-highcharts>
+      </mat-card-content>
+    </mat-card>
+  </mat-card-content>
+</mat-card>

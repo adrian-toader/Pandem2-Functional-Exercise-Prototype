@@ -1,0 +1,72 @@
+{
+  "$id": "/humanResource#",
+  "definitions": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "total": {
+      "type": "number",
+      "minimum": 0
+    },
+    "total_type": {
+      "type": "string",
+      "enum": [
+        "Absolute",
+        "100K"
+      ]
+    },
+    "staff_type": {
+      "type": "string",
+      "enum": [
+        "Ward",
+        "ICU",
+        "Public"
+      ]
+    },
+    "working_surveillance": {
+      "type": "boolean"
+    },
+    "location": {
+      "description": "Staff location",
+      "type": "object",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "reference",
+        "value"
+      ]
+    },
+    "humanResourceResourceEntry": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "$ref": "/humanResource#/definitions/date"
+        },
+        "total": {
+          "$ref": "/humanResource#/definitions/total"
+        },
+        "total_type": {
+          "$ref": "/humanResource#/definitions/total_type"
+        },
+        "staff_type": {
+          "$ref": "/humanResource#/definitions/staff_type"
+        },
+        "working_surveillance": {
+          "$ref": "/humanResource#/definitions/working_surveillance"
+        },
+        "location": {
+          "$ref": "/humanResource#/definitions/location"
+        }
+      }
+    }
+  }
+}

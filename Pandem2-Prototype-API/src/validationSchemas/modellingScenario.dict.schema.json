@@ -1,0 +1,332 @@
+{
+  "$id": "/modellingScenario#",
+  "definitions": {
+    "userId": {
+      "$ref": "/base#/definitions/mongoID"
+    },
+    "modelId": {
+      "$ref": "/base#/definitions/mongoID"
+    },
+    "previousConfigScenarioId": {
+      "$ref": "/base#/definitions/mongoID"
+    },
+    "comparisonScenarioId": {
+      "$ref": "/base#/definitions/mongoID"
+    },
+    "comparisonScenarioName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tags": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "minLength": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "location": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "age": {
+                  "type": "string",
+                  "enum": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e"
+                  ]
+                },
+                "ageContact": {
+                  "type": "string",
+                  "enum": [
+                    "aa",
+                    "ab",
+                    "ac",
+                    "ad",
+                    "ba",
+                    "bb",
+                    "bc",
+                    "bd",
+                    "ca",
+                    "cb",
+                    "cc",
+                    "cd",
+                    "da",
+                    "db",
+                    "dc",
+                    "dd"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "key"
+        ]
+      }
+    },
+    "result_summary": {
+      "type": "object",
+      "properties": {
+        "total_needed_icu_a": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_needed_icu_b": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_needed_icu_c": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_icu_admissions_a": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_icu_admissions_b": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_icu_admissions_c": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_needed_ward_bed_a": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_needed_ward_bed_b": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_needed_ward_bed_c": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_ward_admissions_a": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_ward_admissions_b": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_ward_admissions_c": {
+          "type": "number",
+          "minimum": 0
+        },
+        "potential_deaths_due_to_lack_of_icu_a": {
+          "type": "number",
+          "minimum": 0
+        },
+        "potential_deaths_due_to_lack_of_icu_b": {
+          "type": "number",
+          "minimum": 0
+        },
+        "potential_deaths_due_to_lack_of_icu_c": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_deaths_a": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_deaths_b": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_deaths_c": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peak_icu_demand": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peak_demand_icu_beds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peak_demand_icu_nurses": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peak_demand_ventilators": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peak_ward_demand": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peak_demand_ward_beds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peak_demand_nurses": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peak_demand_ppe": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "sections_order": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "minLength": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "exploration": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "chart_type": {
+            "type": "string",
+            "enum": [
+              "spline",
+              "column",
+              "area"
+            ]
+          },
+          "chart_plot_type": {
+            "type": "string",
+            "enum": [
+              "linear",
+              "logarithmic"
+            ]
+          },
+          "view_by": {
+            "type": "string",
+            "enum": [
+              "scenario",
+              "indicator"
+            ]
+          },
+          "values": {
+            "type": "array",
+            "minLength": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "plotlines": {
+            "type": "array",
+            "minLength": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "chart_type",
+          "chart_plot_type",
+          "view_by",
+          "values",
+          "plotlines"
+        ]
+      }
+    },
+    "is_visible": {
+      "type": "boolean"
+    },
+    
+    "modellingScenarioResourceEntry": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "/modellingScenario#/definitions/userId"
+        },
+        "modelId": {
+          "$ref": "/modellingScenario#/definitions/modelId"
+        },
+        "previousConfigScenarioId": {
+          "$ref": "/modellingScenario#/definitions/previousConfigScenarioId"
+        },
+        "comparisonScenarioId": {
+          "$ref": "/modellingScenario#/definitions/comparisonScenarioId"
+        },
+        "comparisonScenarioName": {
+          "$ref": "/modellingScenario#/definitions/comparisonScenarioName"
+        },
+        "name": {
+          "$ref": "/modellingScenario#/definitions/name"
+        },
+        "date": {
+          "$ref": "/modellingScenario#/definitions/date"
+        },
+        "description": {
+          "$ref": "/modellingScenario#/definitions/description"
+        },
+        "tags": {
+          "$ref": "/modellingScenario#/definitions/tags"
+        },
+        "location": {
+          "$ref": "/modellingScenario#/definitions/location"
+        },
+        "parameters": {
+          "$ref": "/modellingScenario#/definitions/parameters"
+        },
+        "result_summary": {
+          "$ref": "/modellingScenario#/definitions/result_summary"
+        },
+        "sections_order": {
+          "$ref": "/modellingScenario#/definitions/sections_order"
+        },
+        "exploration": {
+          "$ref": "/modellingScenario#/definitions/exploration"
+        },
+        "is_visible": {
+          "$ref": "/modellingScenario#/definitions/is_visible"
+        },
+        "_id": {
+          "$ref": "/base#/definitions/mongoID"
+        }
+      }
+    }
+  }
+}

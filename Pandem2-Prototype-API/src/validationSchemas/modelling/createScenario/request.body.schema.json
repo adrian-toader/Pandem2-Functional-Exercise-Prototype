@@ -1,0 +1,20 @@
+{
+  "$id": "modelling.createScenario.request.body.schema",
+  "description": "Create scenario request body schema",
+  "allOf": [
+    {
+      "$ref": "/modellingScenario#/definitions/modellingScenarioResourceEntry"
+    },
+    {
+      "required": [
+        "userId",
+        "modelId",
+        "name",
+        "date",
+        "tags",
+        "location",
+        "parameters"
+      ]
+    }
+  ]
+}

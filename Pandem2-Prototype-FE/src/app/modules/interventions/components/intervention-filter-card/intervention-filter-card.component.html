@@ -1,0 +1,181 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+
+
+<div class="row">
+  <div class="col-xl-12">
+    <mat-card>
+      <div class="row justify-content-between">
+        <div class="col-lg-6 col-xl-6 position-relative">
+          <mat-card-title>REGION</mat-card-title>
+              <mat-card-content style="margin-top: 0.9em">
+                <mat-form-field appearance="fill" style=" width:100%; margin: 0.25em 0; ">
+                  <mat-label>Selected Region</mat-label>
+                  <mat-select class="region-select" [formControl]="countryControl" (selectionChange)="changed()">
+                    <mat-option *ngFor="let country of allRegions" [value]="country" >{{country.name}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </mat-card-content>
+        </div>
+        <div class="col-lg-6 col-xl-6 position-relative">
+          <mat-card-title>INTERVENTION</mat-card-title>
+          <mat-card-content>
+            <form>
+              <mat-form-field appearance="outline" style="width:100%; padding-top: 3px;">
+                <mat-select class="multiple-input"  [formControl]="interventionControl" multiple (selectionChange)="changedIntervention()">
+                  <mat-select-trigger>
+                    <mat-chip-list>
+                      <mat-chip
+                        *ngFor="let intervention of interventionControl.value"
+                        (removed)="removeIntervention(intervention)" selected>
+                        {{intervention.name}}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                      </mat-chip>
+                      </mat-chip-list>
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let intervention of interventions" [value]="intervention" >{{intervention.name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </form>
+          </mat-card-content>
+        </div>
+      </div>
+      <div class="row justify-content-between">
+        <div class="col-lg-6 col-xl-6 position-relative">
+          <mat-card-title>SOURCES</mat-card-title>
+          <mat-card-content>
+            <form>
+              <mat-form-field appearance="outline" style="width:100% ">
+                <mat-select class="multiple-input" [formControl]="sourceControl" multiple (selectionChange)="changedSource()">
+                  <mat-select-trigger>
+                    <mat-chip-list>
+                      <mat-chip
+                        *ngFor="let item of sourceControl.value"
+                        (removed)="removeSource(item)" selected>
+                        {{item.tag}}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                      </mat-chip>
+                      </mat-chip-list>
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let tag of sources" [value]="tag" >{{tag.tag}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </form>
+          </mat-card-content>
+        </div>
+        <div class="col-lg-6 col-xl-6 position-relative">
+          <mat-card-title>INDICATOR</mat-card-title>
+          <mat-card-content>
+            <form>
+              <mat-form-field appearance="outline" style="width:100% ">
+                <mat-select class="multiple-input" [formControl]="indicatorControl" multiple (selectionChange)="changedIndicator()">
+                  <mat-select-trigger>
+                    <mat-chip-list>
+                      <mat-chip
+                        *ngFor="let indicator of indicatorControl.value"
+                        (removed)="removeIndicator(indicator)" selected>
+                        {{indicator.name}}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                      </mat-chip>
+                      </mat-chip-list>
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let indicator of indicators" [value]="indicator" >{{indicator.name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </form>
+          </mat-card-content>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-12">
+    <mat-card>
+      <mat-card-subtitle>
+        Time Interval
+      </mat-card-subtitle>
+      <div class="row">
+        <div class="col-xl-6">
+          <div class="form-inline">
+            <div class="form-group mr-4">
+              <mat-button-toggle-group [(ngModel)]="dataInterval" aria-label="Type" class="type-container" name="fontStyle">
+              <mat-button-toggle (change)="switchInterval($event)" value="daily">Daily Numbers</mat-button-toggle>
+              <mat-button-toggle (change)="switchInterval($event)" value="7days">7 Day Average</mat-button-toggle>
+              <mat-button-toggle (change)="switchInterval($event)" value="14days">14 Day Average</mat-button-toggle>
+              <mat-button-toggle (change)="switchInterval($event)" value="cumulative">Cumulative</mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-6">
+          <div class="form-inline">
+            <div class="form-group mr-4" *ngIf="displayTotalType">
+              <mat-button-toggle-group [(ngModel)]="dataType" aria-label="Type" class="type-container" name="fontStyle">
+              <mat-button-toggle (change)="switchDataType($event)" value="Absolute">{{graphFilterButtons.ABSOLUTE}}</mat-button-toggle>
+              <mat-button-toggle (change)="switchDataType($event)" value="100K">{{graphFilterButtons.PER100K}}</mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+            <div class="form-group">
+              <mat-button-toggle-group [(ngModel)]="plotType" aria-label="Type" class="type-container" name="fontStyle">
+              <mat-button-toggle (change)="switchPlotType($event)" value="linear">{{graphFilterButtons.LINEAR}}</mat-button-toggle>
+              <mat-button-toggle (change)="switchPlotType($event)" value="logarithmic">{{graphFilterButtons.LOGARITHMIC}}</mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="row">
+      <div class="col-xl-6">
+      </div>
+      <div class="col-xl-6" *ngIf="selectedIndicators.length > 0">
+        <ng-container *ngFor="let item of selectedCountries">
+          <div class="grid-region">
+            <span [ngStyle]="{'background-color': item.color}" class="country-color-square"></span>
+            <span style="font-size: .7vw;"> {{item.name}} </span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <app-exploration-graphs-container
+      [indicatorList]="selectedIndicators"
+      [regionList]="selectedCountries"
+      [isLog]="isLog"
+      [dataInterval]="dataInterval"
+      [dataType]="dataType"
+      [startDate]="startDate"
+      [endDate]="endDate"
+    ></app-exploration-graphs-container>
+      <div>
+        <highcharts-chart
+          [Highcharts]="Highcharts"
+          [options]="xchart"
+          [(update)]="updateChart"
+          (chartInstance)="onChartInstance($event)"
+          [callbackFunction]="refreshChart"
+          style = "width: 100%; display: block;">
+        </highcharts-chart>
+      </div>
+    </mat-card>
+  </div>
+</div>

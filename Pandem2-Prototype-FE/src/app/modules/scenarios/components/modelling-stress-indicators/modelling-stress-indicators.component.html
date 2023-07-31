@@ -1,0 +1,253 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<mat-card>
+  <div class="row">
+    <div class="col-10">
+      <h3 class="modelling-title-weight">Hospital Stress Indicators</h3>
+    </div>
+    <div class="col-2 text-right">
+      <mat-icon class="modelling-info-icon" (click)="openInfoDialog()">info</mat-icon>
+    </div>
+  </div>
+
+  <div class="row">
+    <p class="col-12">
+      Expected demand for ward beds and ICU beds arising from the pandemic compared to normal capacity in hospitals expressed as a multiple. E.g. If pandemic demand for ICU peaks at 2, this means the pandemic demand is expected to peak at twice the normal ICU capacity. 
+      <br>
+      Note: This pandemic demand is in addition to routine demands. Pandemic patients are additional patients and will tend to displace routine patients and procedures.
+    </p>
+  </div>
+
+  <h4 class="modelling-title-weight" *ngIf="!isCollapsed">Estimated increase in demand on resources and overall stress code</h4>
+
+  <div class="row" *ngIf="!isCollapsed">
+    <!-- Baseline scenario -->
+    <div *ngIf="rawData" [ngClass]="{'col-lg-6': comparisonRawData, 'col-xl-12': !comparisonRawData}">
+      <div>
+        <div class="summary-section__name-icon-container mb-3">
+          Baseline scenario: {{rawData.name}}
+        </div>
+
+        <div class="row" *ngIf="data.size">
+          <div class="col-xl-4">
+            <app-highcharts
+              [chartType]="'line'"
+              [series]="wardDemandChart"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'Ward Demand'"
+              [hideLegend]="true"
+              [height]="260">
+            </app-highcharts>
+            <mat-card class="stress-indicator-warning mb-3" [class.flex-column]="comparisonRawData">
+              <div class="stress-indicator-warning-number-group">
+                <mat-icon *ngIf="wardDemandWarning > 1">warning</mat-icon>
+                <span class="stress-indicator-warning-number">{{wardDemandWarning}}</span>
+              </div>
+              <span
+                class="stress-indicator-warning-text"
+                [class.text-center]="comparisonRawData"
+                [class.mt-0]="comparisonRawData">
+                times normal ward capacity
+              </span>
+            </mat-card>
+          </div>
+          <div class="col-xl-4">
+            <app-highcharts
+              [chartType]="'line'"
+              [series]="ICUDemandChart"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'ICU Demand'"
+              [hideLegend]="true"
+              [height]="260">
+            </app-highcharts>
+            <mat-card class="stress-indicator-warning mb-3" [class.flex-column]="comparisonRawData">
+              <div class="stress-indicator-warning-number-group">
+                <mat-icon *ngIf="ICUDemandWarning > 1">warning</mat-icon>
+                <span class="stress-indicator-warning-number">{{ICUDemandWarning}}</span>
+              </div>
+              <span
+                class="stress-indicator-warning-text"
+                [class.text-center]="comparisonRawData"
+                [class.mt-0]="comparisonRawData">
+                times normal ICU capacity
+              </span>
+            </mat-card>
+          </div>
+          <div class="col-xl-4">
+            <app-highcharts
+              [chartType]="'column'"
+              [series]="stressCodeChart"
+              [plotOptions]="stressCodePlotOptions"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'Stress Code'"
+              [toolTip]="stressCodeTooltip"
+              [legendOptions]="stressCodeLegendOptions"
+              [height]="comparisonRawData ? 430 : 350">
+            </app-highcharts>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison Scenario -->
+    <div class="col-lg-6" *ngIf="comparisonRawData">
+      <div>
+        <div class="summary-section__name-icon-container mb-3">
+          Alternative scenario: {{comparisonRawData.name}}
+        </div>
+        <div class="row" *ngIf="comparisonData.size">
+          <div class="col-xl-4">
+            <app-highcharts
+              [chartType]="'line'"
+              [series]="compWardDemandChart"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'Ward Demand'"
+              [hideLegend]="true"
+              [height]="260">
+            </app-highcharts>
+            <mat-card class="stress-indicator-warning mb-3 flex-column">
+              <div class="stress-indicator-warning-number-group">
+                <mat-icon *ngIf="compWardDemandWarning > 1">warning</mat-icon>
+                <span class="stress-indicator-warning-number">{{compWardDemandWarning}}</span>
+              </div>
+              <span class="stress-indicator-warning-text text-center mt-0">
+                times normal ward capacity
+              </span>
+            </mat-card>
+          </div>
+          <div class="col-xl-4">
+            <app-highcharts
+              [chartType]="'line'"
+              [series]="compICUDemandChart"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'ICU Demand'"
+              [hideLegend]="true"
+              [height]="260">
+            </app-highcharts>
+            <mat-card class="stress-indicator-warning mb-3 flex-column">
+              <div class="stress-indicator-warning-number-group">
+                <mat-icon *ngIf="compICUDemandWarning > 1">warning</mat-icon>
+                <span class="stress-indicator-warning-number">{{compICUDemandWarning}}</span>
+              </div>
+              <span class="stress-indicator-warning-text text-center mt-0">
+                times normal ICU capacity
+              </span>
+            </mat-card>
+          </div>
+          <div class="col-xl-4">
+            <app-highcharts
+              [chartType]="'column'"
+              [series]="compStressCodeChart"
+              [plotOptions]="stressCodePlotOptions"
+              [showExportMenu]="true"
+              [xAxisData]="xAxis"
+              [chartTitle]="'Stress Code'"
+              [toolTip]="stressCodeTooltip"
+              [legendOptions]="stressCodeLegendOptions"
+              [height]="430">
+            </app-highcharts>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="modelling-title-weight mt-4" *ngIf="!isCollapsed">Potential additional deaths</h4>
+  <div class="row" *ngIf="!isCollapsed">
+    <p class="col-12">Note: The total number of deaths reported in the Epi indicator section includes these potential additional deaths</p>
+  </div>
+
+  <div class="row mt-1" *ngIf="!isCollapsed">
+    <!-- Baseline scenario -->
+    <div *ngIf="rawData" [ngClass]="{'col-lg-6': comparisonRawData, 'col-xl-12': !comparisonRawData}">
+      <div class="potential-deaths-card-row mb-3">
+        <mat-card class="potential-deaths-card" [class.flex-column]="comparisonRawData" [class.text-center]="comparisonRawData">
+          <div class="potential-deaths-card-number" [class.flex-column]="comparisonRawData">
+            <span>{{totalExpectedDeaths > 1000 ? (Math.round((totalExpectedDeaths / 1000) * 10) / 10) + 'k' : totalExpectedDeaths}}</span>
+          </div>
+          <div class="potential-deaths-card-text">
+            <h6 class="modelling-title-weight">Total Expected Deaths</h6>
+            <p>
+              Deaths expected given the accepted ward and ICU fatality rates. 
+              <br>
+              i.e. not including potential deaths caused by lack of ICU capacity
+            </p>
+          </div>
+        </mat-card>
+        <mat-icon *ngIf="!comparisonRawData">add</mat-icon>
+        <mat-card class="potential-deaths-card" [class.flex-column]="comparisonRawData" [class.text-center]="comparisonRawData">
+          <div class="potential-deaths-card-number" [class.flex-column]="comparisonRawData">
+            <mat-icon *ngIf="potentialDeaths > 0">warning</mat-icon>
+            <span>{{potentialDeaths > 1000 ? (Math.round((potentialDeaths / 1000) * 10) / 10) + 'k' : potentialDeaths}}</span>
+          </div>
+          <div class="potential-deaths-card-text">
+            <h6 class="modelling-title-weight">Total Potential deaths from lack of ICU</h6>
+          </div>
+        </mat-card>
+      </div>
+      <mat-card class="potential-deaths-result-card mt-4">
+        <mat-icon *ngIf="potentialDeaths > 0">warning</mat-icon>
+        <span>{{totalDeaths > 1000 ? (Math.round((totalDeaths / 1000) * 10) / 10) + 'k' : totalDeaths}}</span>
+        <h5>Total Deaths Reported</h5>
+      </mat-card>
+    </div>
+
+    <!-- Comparison scenario -->
+    <div class="col-lg-6" *ngIf="comparisonRawData">
+      <div class="potential-deaths-card-row mb-3">
+        <mat-card class="potential-deaths-card flex-column text-center">
+          <div class="potential-deaths-card-number flex-column">
+            <span>{{compTotalExpectedDeaths > 1000 ? (Math.round((compTotalExpectedDeaths / 1000) * 10) / 10) + 'k' : compTotalExpectedDeaths}}</span>
+          </div>
+          <div class="potential-deaths-card-text">
+            <h6 class="modelling-title-weight">Total Expected Deaths</h6>
+            <p>
+              Deaths expected given the accepted ward and ICU fatality rates. 
+              <br>
+              i.e. not including potential deaths caused by lack of ICU capacity
+            </p>
+          </div>
+        </mat-card>
+        <mat-card class="potential-deaths-card flex-column text-center">
+          <div class="potential-deaths-card-number flex-column">
+            <mat-icon *ngIf="compPotentialDeaths > 0">warning</mat-icon>
+            <span>{{compPotentialDeaths > 1000 ? (Math.round((compPotentialDeaths / 1000) * 10) / 10) + 'k' : compPotentialDeaths}}</span>
+          </div>
+          <div class="potential-deaths-card-text">
+            <h6 class="modelling-title-weight">Total Potential deaths from lack of ICU</h6>
+          </div>
+        </mat-card>
+      </div>
+      <mat-card class="potential-deaths-result-card mt-4">
+        <mat-icon *ngIf="compPotentialDeaths > 0">warning</mat-icon>
+        <span>{{compTotalDeaths > 1000 ? (Math.round((compTotalDeaths / 1000) * 10) / 10) + 'k' : compTotalDeaths}}</span>
+        <h5>Total Deaths Reported</h5>
+      </mat-card>
+    </div>
+  </div>
+</mat-card>

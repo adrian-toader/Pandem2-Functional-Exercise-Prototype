@@ -1,0 +1,153 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<div *ngIf="!scenario || scenario && !scenario.name" style="height:100%;">
+  <mat-card style="height:100%;">
+    <mat-card-title>No previous scenarios found</mat-card-title>
+  </mat-card>
+</div>
+<div *ngIf="scenario && scenario.name" style="height: 100%;">
+  <mat-card style="height: 100%;">
+    <div class="summary-section__name-icon-container">
+      <div>{{'Scenarios' | uppercase}}</div>
+      <div>
+        <mat-icon class="disable">list</mat-icon>
+      </div>
+    </div>
+    <mat-card-title class="text-center text-sm-left" [ngClass]="!isLatest && 'mb-4'">
+      <span *ngIf="scenario.comparisonScenarioName">
+        Baseline:
+      </span>
+      {{scenario.name}}
+      <span *ngIf="scenario.comparisonScenarioName">
+        | Alternative: {{scenario.comparisonScenarioName}}
+      </span>
+    </mat-card-title>
+    <mat-card-subtitle class="text-center text-sm-left" *ngIf="isLatest">
+      {{'Last run scenario' | uppercase}}
+    </mat-card-subtitle>
+    <mat-card-content>
+      <div class="row">
+        <div class="col-lg-12">
+          <mat-chip-list>
+            <mat-chip class="scenario-chip" [disabled]="true" *ngFor="let tag of scenario.tags">
+              <mat-icon class="mr-2" *ngIf="tag === scenario.location">location_on</mat-icon>
+              <mat-icon class="mr-2" *ngIf="tag.toLowerCase() === 'important'">error_outline</mat-icon>
+              <mat-icon class="mr-2" *ngIf="tag.toLowerCase() === 'data inputs'">playlist_add_check</mat-icon>
+              <mat-icon class="mr-2" *ngIf="tag.toLowerCase() === 'comparison'">compare</mat-icon>
+              {{tag}}
+            </mat-chip>
+          </mat-chip-list>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <p class="scenario-description">{{scenario.description}}</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12 d-flex justify-content-between">
+          <div>
+            {{moment(scenario.date).format(Constants.DEFAULT_MODELLING_DATE_DISPLAY_FORMAT)}}
+          </div>
+          <div>
+            <button
+              mat-raised-button
+              color="primary-button"
+              (click)="onInfoClick()"
+              class="mx-2 px-5"
+              [class.modelling-results-actions]="isOnResultsPage">
+              <div class="row justify-content-between align-items-center">
+                <mat-icon>info</mat-icon>
+                <div>{{'Scenario info' | uppercase}}</div>
+              </div>
+            </button>
+            <button
+              mat-raised-button
+              color="primary-button"
+              (click)="onDeleteClick()"
+              class="mx-2 px-5"
+              [disabled]="isOnResultsPage && !isScenarioSaved"
+              [class.modelling-results-actions]="isOnResultsPage">
+              <div class="row justify-content-between align-items-center">
+                <mat-icon>delete</mat-icon>
+                <div>{{'Delete' | uppercase}}</div>
+              </div>
+            </button>
+            <button 
+              mat-raised-button
+              color="primary-button"
+              (click)="onShareClick()"
+              class="mx-2 px-5"
+              [disabled]="isOnResultsPage && !isScenarioSaved && currentUser.id === scenario.userId"
+              [class.modelling-results-actions]="isOnResultsPage">
+              <div class="row justify-content-between align-items-center">
+                <mat-icon>share</mat-icon>
+                <div>{{'Share' | uppercase}}</div>
+              </div>
+            </button>
+            <button 
+              mat-raised-button
+              color="primary-button"
+              (click)="onLoadClick()"
+              class="mx-2 px-5"
+              *ngIf="!isOnResultsPage">
+              <div class="row justify-content-between align-items-center">
+                <mat-icon>file_upload</mat-icon>
+                <div>{{'Load' | uppercase}}</div>
+              </div>
+            </button>
+            <button 
+              mat-raised-button 
+              color="primary-button" 
+              (click)="onSaveClick()" 
+              class="mx-2 px-5" 
+              *ngIf="isOnResultsPage"
+              [disabled]="!updateEnabled && isScenarioSaved || saveClicked"
+              [class.modelling-results-actions]="isOnResultsPage">
+              <div class="row justify-content-between align-items-center">
+                <ng-container *ngIf="(!isScenarioSaved) && !saveClicked">
+                  <mat-icon>save</mat-icon>
+                  <div>{{'Save' | uppercase}}</div>
+                </ng-container>
+                <ng-container *ngIf="(updateEnabled && isScenarioSaved) && !saveClicked">
+                  <mat-icon>save</mat-icon>
+                  <div>{{'Update' | uppercase}}</div>
+                </ng-container>
+                <ng-container *ngIf="(updateEnabled || !isScenarioSaved) && saveClicked">
+                  <mat-icon>save</mat-icon>
+                  <div>{{'Saving' | uppercase}}</div>
+                </ng-container>
+                <ng-container *ngIf="!updateEnabled && isScenarioSaved">
+                  <mat-icon>checkmark</mat-icon>
+                  <div>{{'Saved' | uppercase}}</div>
+                </ng-container>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

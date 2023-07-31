@@ -1,0 +1,51 @@
+{
+  "$id": "bed.getDaily.request.query.schema",
+  "description": "Get bed occupancy statistics grouped by day - request query schema",
+  "type": "object",
+  "properties": {
+    "total_type": {
+      "$ref": "/bed#/definitions/total_type"
+    },
+    "location": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bed_type": {
+      "type": ["string", "array"],
+      "items" : {
+        "$ref": "/bed#/definitions/bed_type"
+      }
+    },
+    "split": {
+      "type": "string",
+      "enum": [
+        "occupation_type",
+        "bed_type",
+        "age_group",
+        "has_comorbidities"
+      ]
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "empty_fields": {
+      "type": ["string", "array"],
+      "items": {
+        "type": "string"
+      }
+    },
+    "period_type": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "total_type",
+    "location",
+    "split"
+  ]
+}

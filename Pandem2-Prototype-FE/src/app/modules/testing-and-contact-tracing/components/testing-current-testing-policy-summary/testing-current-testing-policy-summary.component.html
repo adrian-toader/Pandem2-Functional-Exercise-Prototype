@@ -1,0 +1,82 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<mat-card class="summary-section">
+  <div *ngIf="isLoading()" class="mat-spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div *ngIf="isLoaded()">
+    <div class="summary-section__name-icon-container">
+      <div>
+        Testing
+      </div>
+      <div>
+        <mat-icon (click)="showInfo = !showInfo">info</mat-icon>
+      </div>
+    </div>
+    <mat-card-title class="text-center text-sm-left">
+      Current Testing Policy
+    </mat-card-title>
+    <mat-card-subtitle class="text-center text-sm-left">
+      <app-sources
+        [sourceType]="SourceType.SUMMARY"
+        [sources]="sources"></app-sources>
+    </mat-card-subtitle>
+    <mat-card-content>
+      <p *ngIf="showInfo" class="text-center text-sm-left info-text">
+        The figure shows the number of positive tests reported in the preceding 24 hours. The date attributed to positive
+        tests is the date on which the relevant organisation was notified by the relevant health authority. This is not
+        the same as the date on which people are tested. Part of the notification process is done manually. Sometimes the
+        health authority will not have reported all newly confirmed cases at the moment that the figures are compiled for
+        the preceding 24 hours. Missing notifications are passed on at a later time. Missing or delayed notifications can
+        skew the daily figures. The rolling average filters out this type of fluctuation, and therefore often gives a
+        better picture of the number of infections.
+      </p>
+      <mat-list>
+        <mat-list-item>
+          <div class="col-xl-6 label">
+            Current Testing Policy <br/>
+            {{policyDate}}
+          </div>
+          <div class="col-xl-6 text-right">
+            <span style="color:#0272c6">{{policy}}</span>
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <br/>
+          OxCGRT collects publicly available information on indicators of government response. These indicators take
+          policies such as school closuers, travel bans, etc.
+          and record them on an ordinal scale. The remainder is financial indicators, such as fiscal or monetary measures.
+          <br/><br/>
+          0 - No testing policy <br/>
+          1 - Only those who both (a) have symptoms AND (b) meet specific criteria(e.g.: key workers, admitted to
+          hospital, came into contact with a known case, returned from overseas) <br/>
+          2 - Testing of anyone showing Avian Influenza symptoms <br/>
+          3 - Open public testing (e.g.: "drive through" testing available to asymptomatic people) <br/>
+          No data.
+
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </div>
+</mat-card>

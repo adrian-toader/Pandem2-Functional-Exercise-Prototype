@@ -1,0 +1,10 @@
+{
+  "$id": "intervention.updateIntervention.response.body.schema",
+  "description": "Modify intervention instance response body schema",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "/intervention#/definitions/interventionResourceEntry"
+    }
+  ]
+}

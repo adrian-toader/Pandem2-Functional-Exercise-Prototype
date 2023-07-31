@@ -1,0 +1,126 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<mat-card>
+  <mat-card-title>
+    <div class="row">
+      <div class="col-md-12 text-center text-sm-left">
+        Vaccination Uptake: Vaccination Coverage
+      </div>
+    </div>
+  </mat-card-title>
+  <br>
+  <mat-card-subtitle>
+    <div class="row">
+      <div class="col-md-7 mb-4 text-center text-sm-left">
+        <p>
+          Vaccination is the most important step towards getting life back to normal. The figures on this page show the progress of vaccinations
+        </p>
+        <p>
+          European Medicines Agency (EMA) Recommended priority groups include people aged 60 years and above, pregnant or immunocompromised people, residents and staff of long-term care homes and healthcare workers.
+        </p>
+      </div>
+      <div class="col-md-5 mb-4 text-center text-sm-left text-md-right">
+        <app-sources
+          [sourceType]="SourceType.GRAPH"
+          [sources]="data?.sources"
+          [lastUpdate]="data?.lastUpdate"></app-sources>
+      </div>
+    </div>
+  </mat-card-subtitle>
+  <mat-card-content *ngIf="!isCollapsed">
+    <div class="form-inline">
+      <div class="form-group mr-4 mb-4">
+        <app-chart-time-interval (intervalChanged)="changeTimeInterval($event)" [intervalOptions]="chartsIntervalOptions"></app-chart-time-interval>
+      </div>
+      <div class="form-group mr-4 mb-4">
+        <mat-button-toggle-group [(ngModel)]="population" aria-label="Type" class="d-none d-md-inline-flex type-container" name="fontStyle">
+          <mat-button-toggle (change)="changeSubcategory($event)" value="{{Population.AllPopulation}}" >
+            ALL POPULATION
+          </mat-button-toggle>
+          <mat-button-toggle (change)="changeSubcategory($event)" value="{{Population.EMARecommendedPopulation}}">
+            EMA PRIORITY GROUPS
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+    <mat-card>
+      <mat-card-title class="text-center text-sm-left">
+        <div class="row">
+          <div class="col-xl-6">
+            Vaccination uptake
+          </div>
+          <div class="col-xl-6 text-right">
+            <mat-card-content>
+              <mat-radio-group (change)='changeGraphType($event)'>
+                <mat-radio-button [checked]="true" value="proportional" >Proportional</mat-radio-button>
+                <mat-radio-button  value="grouped" style="margin-left:16px">Grouped</mat-radio-button>
+              </mat-radio-group>
+            </mat-card-content>
+          </div>
+        </div>
+      </mat-card-title>
+      <mat-card-content>
+        <div class="row">
+          <div class="col-xl-12">
+            <div *ngIf="isLoading()" class="mat-spinner-container loading-chart-placeholder">
+              <mat-spinner></mat-spinner>
+            </div>
+            <div *ngIf="isLoaded()">
+              <app-highcharts
+                [xAxisData]="[populationLabel]"
+                [showExportMenu]="true"
+                [series]="summarySeries"
+                chartType="bar"
+                [plotOptions]="chartPlotOptions"
+                [chart]="barChartOptions"
+                [toolTip]="chartToolTip"
+              ></app-highcharts>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <br>
+    <mat-card>
+      <mat-card-title class="text-center text-sm-left">Vaccination uptake:Over time</mat-card-title>
+      <mat-card-content>
+        <div *ngIf="isLoading()" class="mat-spinner-container loading-chart-placeholder">
+          <mat-spinner></mat-spinner>
+        </div>
+        <div *ngIf="isLoaded()">
+          <app-highcharts
+            [chart]="chartOptions"
+            [showExportMenu]="true"
+            [xAxisData]="data?.xAxis"
+            [series]="overTimeSeries"
+            chartType="column"
+            [yAxisName]="''"
+            [chartTitle]="''"
+            [plotOptions]="casesChartPlotOptions"
+            [toolTip]="chartToolTip"
+          ></app-highcharts>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,199 @@
+/*
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+*/
+.mat-primary-color {
+  color: #0272C6;
+}
+
+.modelling-parameters-main-card-manager-dialog {
+  width: 80vw;
+  max-width: 1200px;
+  height: 90vh;
+  padding: 3em;
+}
+
+.modelling-button {
+  background-color: #D5DCE0 !important;
+  align-self: center;
+}
+
+.modelling-button-accent-color {
+  background-color: #0272C6 !important;
+  color: white;
+}
+
+.modelling-button-run {
+  font-size: 1.5em;
+  padding: 10px 20px;
+}
+
+.modelling-button-run mat-icon{
+  line-height: 0.65em;
+  font-size: 1.3em;
+  color: #0272C6;
+}
+
+.modelling-icon-size mat-icon {
+  font-size: 1.5em;
+}
+
+.param-subcategory-simple-title {
+  background-color: #9edfff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3em;
+  line-height: 1.8em;
+}
+
+.param-subcategory-age-group-title {
+  background-color: #9edfff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.3em;
+  line-height: 1.8em;
+}
+
+.param-input-row {
+  justify-content: space-between;
+}
+
+.param-input-row + .param-input-row {
+  margin-top: 0;
+}
+
+.param-config-form-name {
+  display: flex;
+  align-items: center;
+  padding-left: 1.5em;
+}
+
+.param-config-form-field-groups {
+  display: flex;
+}
+
+.param-config-form-field-group {
+  min-width: 25%;
+}
+
+.param-config-form-field {
+  width: 100%;
+}
+
+.param-config-form-field > .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+.param-config-form-field > .mat-form-field-wrapper > .mat-form-field-flex > .mat-form-field-infix {
+  border-top: 0.4em solid transparent;
+  padding: 0.8em 0;
+}
+
+.param-config-switch {
+  margin-right: 2em;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+.param-config-switch.mat-checked .mat-ripple-element {
+  background-color: #0272C6 !important;
+}
+
+.param-config-switch  .mat-slide-toggle-thumb {
+  background-color: rgb(240, 240, 240);
+}
+
+.param-config-switch  .mat-slide-toggle-bar {
+  background-color: rgb(210, 210, 210);
+}
+
+.param-config-slider {
+  background-color: transparent !important;
+}
+
+.param-config-slider .mat-slider-thumb {
+  border-radius: 50% !important;
+  bottom: -22px !important;
+  background-color: #0272c6 !important;
+  border: 12px solid rgba(2,114,198,0.2) !important;
+  background-clip: padding-box;
+  height: 40px !important;
+  width: 40px !important;
+}
+
+.param-config-slider.mat-slider-min-value:not(.mat-slider-thumb-label-showing) .mat-slider-thumb {
+  background-color: #0272c6 !important;
+  border: 12px solid rgba(2,114,198,0.2) !important;
+}
+
+.param-config-slider.mat-slider-min-value:not(.mat-slider-thumb-label-showing):hover .mat-slider-thumb {
+  background-color: #0272c6;
+  border: 12px solid rgba(2,114,198,0.2);
+}
+
+.param-config-slider.mat-slider.cdk-focused .mat-slider-track-background {
+  background-color: #9fc9e9;
+}
+
+.param-config-slider .mat-slider-wrapper {
+  top: 20px !important; 
+}
+
+.param-config-slider .mat-slider-track-wrapper {
+  height: 6px !important;
+}
+
+.param-config-slider .mat-slider-track-background {
+  background-color: #9fc9e9;
+}
+
+.param-config-slider:hover .mat-slider-track-background {
+  background-color: #9fc9e9;
+}
+
+.param-config-slider.mat-slider:not(.mat-slider-disabled).cdk-mouse-focused .mat-slider-thumb {
+  border-width: 12px !important;
+  transform: scale(0.85) !important;
+}
+
+.slider-border{
+  border-bottom: 1px solid lightgray;
+  margin-bottom: 0.75em;
+}
+
+.modelling-form-title{
+  text-align: center;
+}
+
+.modelling-form-title > mat-card-title{
+  font-size: 1.2em;
+  color: rgba(0, 0, 0, 0.54);
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+@media screen and (max-width: 800px) {
+  .main-card-manager-dialog {
+    max-width: 100%;
+  }
+}

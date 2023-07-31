@@ -1,0 +1,119 @@
+<!--
+  Copyright Clarisoft, a Modus Create Company, 20/07/2023, licensed under the
+  EUPL-1.2 or later. This open-source code is licensed following the Attribution
+  4.0 International (CC BY 4.0) - Creative Commons — Attribution 4.0 International
+  — CC BY 4.0.
+
+  Following this, you are accessible to:
+
+  Share - copy and redistribute the material in any medium or format.
+  Adapt - remix, transform, and build upon the material commercially.
+
+  Remark: The licensor cannot revoke these freedoms if you follow the license
+  terms.
+
+  Under the following terms:
+
+  Attribution - You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so reasonably but not in any way
+  that suggests the licensor endorses you or your use.
+  No additional restrictions - You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+-->
+<div class="container-fluid dashboard-page">
+  <div class="mb-4">
+    <app-modelling-header></app-modelling-header>
+  </div>
+
+  <div class="mb-4">
+    <app-modelling-breadcrumb></app-modelling-breadcrumb>
+  </div>
+
+  <ng-container *ngIf="rawData">
+    <div class="row">
+      <div class="col-xl-12">
+        <h3 class="modelling-title-weight">Actions</h3>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-xl-8">
+        <div style="height:100%; width:100%;">
+          <app-modelling-scenario-summary
+            [scenario]="rawData"
+            [comparisonScenario]="comparisonRawData"
+            [isOnResultsPage]="true"
+            [updateEnabled]="updateEnabled"
+            [isScenarioSaved]="isScenarioSaved"
+            [isLatest]="true"
+            (delete)="scenarioDeleted()"
+            (save)="saveClicked()">
+          </app-modelling-scenario-summary>
+        </div>
+      </div>
+      <div class="col-xl-4">
+        <app-modelling-actions
+          [isOnResultsPage]="true"
+          [baselineScenario]="rawData"
+          [prevScenario]="comparisonRawData ? comparisonRawData : rawData"
+          [prevModel]="model"
+          (removeClickedEvent)="removeComparison()">
+        </app-modelling-actions>
+      </div>
+    </div>
+  </ng-container>
+
+  <div *ngIf="!dataChart.size || comparisonScenarioId && !comparisonDataChart.size || !modelKey" class="mat-spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <!-- Show the results corresponding to the scenario model -->
+  <ng-container *ngIf="(dataChart.size && !comparisonScenarioId || comparisonDataChart.size) && showData">
+    <ng-container *ngFor="let element of modellingSections.get(modelKey), let i = index">
+      <div class="row mb-4">
+        <div class="col-xl-10" *ngIf="element.id !== 'ModellingExplorationComponent'">
+          <app-modelling-section-wrapper
+            [section]="element.section"
+            [sectionId]="element.id"
+            [rawData]="rawData"
+            [data]="dataChart"
+            [comparisonRawData]="comparisonRawData"
+            [comparisonData]="comparisonDataChart"
+            [xAxis]="xAxis"
+            [isCollapsed]="element.isCollapsed"
+          ></app-modelling-section-wrapper>
+        </div>
+        <div class="col-xl-12" *ngIf="element.id === 'ModellingExplorationComponent'">
+          <app-modelling-section-wrapper
+            #explorationElement
+            [section]="element.section"
+            [sectionId]="element.id"
+            [rawData]="rawData"
+            [data]="dataChart"
+            [comparisonRawData]="comparisonRawData"
+            [comparisonData]="comparisonDataChart"
+            [xAxis]="xAxis"
+            [isCollapsed]="element.isCollapsed"
+            [isScenarioSaved]="isScenarioSaved"
+            (explorationChangedStatus)="updateSavingStatus($event)"
+          ></app-modelling-section-wrapper>
+        </div>
+        <div class="col-xl-2" *ngIf="element.id !== 'ModellingExplorationComponent'">
+          <app-modelling-card-manager
+            [index]="i"
+            [lastIndex]="modellingSections.get(modelKey).length - 1"
+            [chartPage]="this"
+            [isCollapsed]="element.isCollapsed"
+            [isSection]="true"
+            [isScenarioSaved]="isScenarioSaved"
+            [isCopyDisabled]="element.isCopiedToReport"
+            [showCopyWarning]="!isScenarioSaved"
+            (collapseEvent)="collapseIndex($event)"
+            (moveUpEvent)="moveUpIndex($event)"
+            (moveDownEvent)="moveDownIndex($event)"
+            (copyToReportEvent)="copyToReport($event)">
+          </app-modelling-card-manager>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

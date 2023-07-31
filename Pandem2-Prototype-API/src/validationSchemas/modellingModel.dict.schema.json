@@ -1,0 +1,207 @@
+{
+  "$id": "/modellingModel#",
+  "definitions": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pathogen": {
+      "type": "string",
+      "minLength": 1
+    },
+    "short_description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "title",
+          "paragraphs"
+        ]
+      }
+    },
+    "model_structure_image": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Data",
+              "Public health policies",
+              "Disease severity",
+              "Hospital resources",
+              "Hospital surge strategies",
+              "Modelling options"
+            ]
+          },
+          "subcategory": {
+            "type": "string",
+            "enum": [
+              "Vaccination",
+              "Mobility",
+              "Testing & isolation",
+              "Contact tracing",
+              "Mask wearing",
+
+              "Hospitalisation parameters",
+              "Length of stay (LOS) in days",
+              "Fatality rates",
+              "Effect of therapeutic interventions (fraction reductions)",
+
+              "Pandemic resource allocation",
+              "Resource usage rates",
+              "Oxygen",
+              "PPE",
+              "Therapeutic capacity (proportion of patients that can be treated, 0 to 1)",
+              "Morgue",
+
+              "Strategy 1: activate when ICU nurse capacity is low",
+              "Strategy 2: activate when ward nurse capacity is low",
+              "Strategy 3: activate when PPE supplies run low",
+              "Strategy 4: activate when physical ward bed capacity is low"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Number",
+              "Boolean"
+            ]
+          },
+          "step": {
+            "type": "number"
+          },
+          "readonly": {
+            "type": "boolean"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "limits": {
+                  "type": "object",
+                  "properties": {
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "age": {
+                  "type": "string",
+                  "enum": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e"
+                  ]
+                },
+                "ageContact": {
+                  "type": "string",
+                  "enum": [
+                    "aa",
+                    "ab",
+                    "ac",
+                    "ad",
+                    "ba",
+                    "bb",
+                    "bc",
+                    "bd",
+                    "ca",
+                    "cb",
+                    "cc",
+                    "cd",
+                    "da",
+                    "db",
+                    "dc",
+                    "dd"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "name",
+          "key",
+          "type"
+        ]
+      }
+    },
+    
+    "modellingModelResourceEntry": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "/modellingModel#/definitions/name"
+        },
+        "key": {
+          "$ref": "/modellingModel#/definitions/key"
+        },
+        "pathogen": {
+          "$ref": "/modellingModel#/definitions/pathogen"
+        },
+        "short_description": {
+          "$ref": "/modellingModel#/definitions/short_description"
+        },
+        "description": {
+          "$ref": "/modellingModel#/definitions/description"
+        },
+        "model_structure_image": {
+          "$ref": "/modellingModel#/definitions/model_structure_image"
+        },
+        "parameters": {
+          "$ref": "/modellingModel#/definitions/parameters"
+        },
+        "_id": {
+          "$ref": "/base#/definitions/mongoID"
+        }
+      }
+    }
+  }
+}
